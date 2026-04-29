@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Placement Readiness Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f6f5f2;
+      --surface: #ffffff;
+      --surface2: #f0efe9;
+      --border: #e2e0d8;
+      --border2: #cac8bf;
+      --text: #1a1916;
+      --text2: #6b6a65;
+      --text3: #9c9b97;
+      --blue: #185FA5;
+      --blue-light: #E6F1FB;
+      --blue-mid: #378ADD;
+      --blue-dark: #0C447C;
+      --green: #3B6D11;
+      --green-light: #EAF3DE;
+      --green-mid: #639922;
+      --red: #A32D2D;
+      --red-light: #FCEBEB;
+      --red-mid: #E24B4A;
+      --amber: #854F0B;
+      --amber-light: #FAEEDA;
+      --amber-mid: #BA7517;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--text2);
+      margin-top: 6px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .prog-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .prog-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border2);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text3);
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .prog-circle.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+
+    .prog-circle.done {
+      background: var(--green-light);
+      border-color: var(--green-mid);
+      color: var(--green);
+    }
+
+    .prog-label {
+      font-size: 12px;
+      color: var(--text3);
+      white-space: nowrap;
+      display: none;
+    }
+
+    @media (min-width: 500px) { .prog-label { display: block; } }
+
+    .prog-label.active { color: var(--blue); font-weight: 500; }
+    .prog-label.done { color: var(--green); }
+
+    .prog-line {
+      flex: 1;
+      height: 1.5px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .prog-line.done { background: var(--green-mid); }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: none;
+    }
+
+    .card.active { display: block; }
+
+    .card-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .card-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Form elements */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 6px;
+      margin-top: 18px;
+    }
+
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--blue-mid);
+      box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
+    }
+
+    /* Skill tags */
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .tag:hover { border-color: var(--border2); color: var(--text); }
+
+    .tag.selected {
+      background: var(--blue-light);
+      border-color: var(--blue-mid);
+      color: var(--blue-dark);
+      font-weight: 500;
+    }
+
+    .add-skill-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .add-skill-row input { flex: 1; }
+
+    /* Company grid */
+    .company-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) { .company-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .company-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      background: var(--surface);
+    }
+
+    .company-card:hover {
+      background: var(--surface2);
+      border-color: var(--border2);
+    }
+
+    .company-card.selected {
+      background: var(--blue-light);
+      border: 2px solid var(--blue-mid);
+    }
+
+    .co-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .co-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .co-skills { font-size: 11px; color: var(--text3); line-height: 1.5; }
+    .company-card.selected .co-name { color: var(--blue-dark); }
+
+    /* Comparison */
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .match-pct { font-size: 22px; font-weight: 600; }
+
+    .match-meter {
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .match-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+
+    .match-sub { font-size: 12px; color: var(--text3); margin-bottom: 1.25rem; }
+
+    .skill-table { width: 100%; }
+
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .skill-row:last-child { border-bottom: none; }
+    .skill-name-col { font-weight: 500; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .pill-green { background: var(--green-light); color: var(--green); }
+    .pill-red { background: var(--red-light); color: var(--red); }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Result */
+    .result-hero {
+      text-align: center;
+      padding: 1.5rem 0 1rem;
+    }
+
+    .result-icon { font-size: 52px; margin-bottom: 0.75rem; line-height: 1; }
+    .result-name { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+    .result-status-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .badge-ready { background: var(--green-light); color: var(--green); }
+    .badge-notready { background: var(--red-light); color: var(--red); }
+
+    .result-company { font-size: 13px; color: var(--text3); margin-top: 6px; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 1.25rem 0;
+    }
+
+    .stat-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-val { font-size: 26px; font-weight: 600; }
+    .stat-lbl { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      margin-top: 1.25rem;
+    }
+
+    .suggest-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .suggest-item:last-child { border-bottom: none; }
+
+    .suggest-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .suggest-icon svg { width: 14px; height: 14px; stroke: var(--blue); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .suggest-skill { font-size: 14px; font-weight: 600; color: var(--text); }
+    .suggest-course { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+    .alert-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+
+    .alert-amber { background: var(--amber-light); color: var(--amber); }
+
+    .all-good {
+      text-align: center;
+      padding: 1rem;
+      font-size: 14px;
+      color: var(--text2);
+      background: var(--green-light);
+      border-radius: var(--radius-sm);
+      margin-top: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn:hover { background: var(--surface2); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn.primary {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    .btn.primary:hover { background: var(--blue-dark); }
+
+    .btn.sm { padding: 8px 14px; font-size: 13px; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 1.5rem;
+      align-items: center;
+    }
+
+    .btn-row.centered { justify-content: center; }
+
+    .error-msg {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* Score helper */
+    .score-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .score-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--blue-mid);
+      transition: width 0.3s;
+    }
+
+    .score-hint-text { font-size: 12px; color: var(--text3); white-space: nowrap; }
+
+    /* Divider */
+    .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+    /* Flowchart mini-steps */
+    .flow-steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+
+    .flow-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+
+    .flow-arrow { font-size: 11px; color: var(--border2); padding: 0 4px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Campus Recruitment Tool</div>
+  <h1>Placement Readiness Tracker</h1>
+  <p>Check if you're ready for campus placements at your dream company</p>
+</header>
+
+<div class="container">
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="prog-circle active" id="pc0">1</div>
+    <div class="prog-label active" id="pl0">Student details</div>
+    <div class="prog-line" id="pline0"></div>
+    <div class="prog-circle" id="pc1">2</div>
+    <div class="prog-label" id="pl1">Select company</div>
+    <div class="prog-line" id="pline1"></div>
+    <div class="prog-circle" id="pc2">3</div>
+    <div class="prog-label" id="pl2">Skill check</div>
+    <div class="prog-line" id="pline2"></div>
+    <div class="prog-circle" id="pc3">4</div>
+    <div class="prog-label" id="pl3">Result</div>
+  </div>
+
+  <!-- Step 0: Student Details -->
+  <div class="card active" id="step0">
+    <div class="card-header">
+      <div class="card-badge">Step 1 of 4</div>
+      <div class="card-title">Your details</div>
+    </div>
+
+    <label>Full name</label>
+    <input type="text" id="studentName" placeholder="e.g. Priya Sharma" />
+
+    <label>CGPA <span style="font-weight:400;color:var(--text3)">(out of 10)</span></label>
+    <input type="number" id="studentScore" min="0" max="10" step="0.01" placeholder="e.g. 7.8" oninput="updateScoreBar()" />
+    <div class="score-hint">
+      <div class="score-bar"><div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div></div>
+      <div class="score-hint-text" id="scoreHintText">Enter CGPA</div>
+    </div>
+
+    <label>Your skills <span style="font-weight:400;color:var(--text3)">— select all that apply</span></label>
+    <div class="skill-tags" id="skillTagsContainer">
+      <div class="tag" data-skill="Python" onclick="toggleSkill(this)">Python</div>
+      <div class="tag" data-skill="Java" onclick="toggleSkill(this)">Java</div>
+      <div class="tag" data-skill="DSA" onclick="toggleSkill(this)">DSA</div>
+      <div class="tag" data-skill="SQL" onclick="toggleSkill(this)">SQL</div>
+      <div class="tag" data-skill="DBMS" onclick="toggleSkill(this)">DBMS</div>
+      <div class="tag" data-skill="OOP" onclick="toggleSkill(this)">OOP</div>
+      <div class="tag" data-skill="Aptitude" onclick="toggleSkill(this)">Aptitude</div>
+      <div class="tag" data-skill="Communication" onclick="toggleSkill(this)">Communication</div>
+      <div class="tag" data-skill="C++" onclick="toggleSkill(this)">C++</div>
+      <div class="tag" data-skill="Machine Learning" onclick="toggleSkill(this)">Machine Learning</div>
+      <div class="tag" data-skill="React" onclick="toggleSkill(this)">React</div>
+      <div class="tag" data-skill="Node.js" onclick="toggleSkill(this)">Node.js</div>
+      <div class="tag" data-skill="OS" onclick="toggleSkill(this)">OS</div>
+      <div class="tag" data-skill="Networking" onclick="toggleSkill(this)">Networking</div>
+    </div>
+    <div class="add-skill-row">
+      <input type="text" id="customSkill" placeholder="Add a custom skill..." onkeydown="if(event.key==='Enter')addCustomSkill()" />
+      <button class="btn sm" onclick="addCustomSkill()">+ Add</button>
+    </div>
+
+    <div id="step0Error" class="error-msg"></div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="goToStep1()">Choose company →</button>
+    </div>
+  </div>
+
+  <!-- Step 1: Select Company -->
+  <div class="card" id="step1">
+    <div class="card-header">
+      <div class="card-badge">Step 2 of 4</div>
+      <div class="card-title">Select target company</div>
+    </div>
+
+    <div class="company-grid" id="companyGrid">
+      <div class="company-card" data-company="Google" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#E8F0FE;color:#1967D2;">G</div>
+        <div class="co-name">Google</div>
+        <div class="co-skills">Python · DSA · SQL</div>
+      </div>
+      <div class="company-card" data-company="TCS" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#E8F5E9;color:#1B5E20;">T</div>
+        <div class="co-name">TCS</div>
+        <div class="co-skills">Java · Aptitude · Communication</div>
+      </div>
+      <div class="company-card" data-company="Infosys" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#FFF3E0;color:#E65100;">I</div>
+        <div class="co-name">Infosys</div>
+        <div class="co-skills">Python · DBMS · OOP</div>
+      </div>
+      <div class="company-card" data-company="Amazon" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#FFF8E1;color:#F57F17;">A</div>
+        <div class="co-name">Amazon</div>
+        <div class="co-skills">DSA · Python · OOP</div>
+      </div>
+      <div class="company-card" data-company="Wipro" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#F3E5F5;color:#6A1B9A;">W</div>
+        <div class="co-name">Wipro</div>
+        <div class="co-skills">Java · SQL · Communication</div>
+      </div>
+      <div class="company-card" data-company="Accenture" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#FCE4EC;color:#880E4F;">Ac</div>
+        <div class="co-name">Accenture</div>
+        <div class="co-skills">C++ · DBMS · Aptitude</div>
+      </div>
+      <div class="company-card" data-company="Microsoft" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#E3F2FD;color:#01579B;">M</div>
+        <div class="co-name">Microsoft</div>
+        <div class="co-skills">DSA · OOP · OS</div>
+      </div>
+      <div class="company-card" data-company="Cognizant" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#E8EAF6;color:#283593;">C</div>
+        <div class="co-name">Cognizant</div>
+        <div class="co-skills">Java · SQL · Aptitude</div>
+      </div>
+      <div class="company-card" data-company="HCL" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#F1F8E9;color:#33691E;">H</div>
+        <div class="co-name">HCL</div>
+        <div class="co-skills">C++ · Networking · OOP</div>
+      </div>
+    </div>
+
+    <div id="step1Error" class="error-msg"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="goToStep(0)">← Back</button>
+      <button class="btn primary" onclick="goToStep2()">Compare skills →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Skill Comparison -->
+  <div class="card" id="step2">
+    <div class="card-header">
+      <div class="card-badge">Step 3 of 4</div>
+      <div class="card-title">Skill comparison</div>
+    </div>
+    <div id="comparisonContent"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="goToStep(1)">← Back</button>
+      <button class="btn primary" onclick="goToStep3()">See result →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Result -->
+  <div class="card" id="step3">
+    <div class="card-header">
+      <div class="card-badge">Step 4 of 4 — Final Result</div>
+      <div class="card-title">Placement readiness report</div>
+    </div>
+    <div id="resultContent"></div>
+    <div class="divider"></div>
+    <div class="btn-row centered">
+      <button class="btn" onclick="restart()">← Check another student</button>
+      <button class="btn primary" onclick="window.print()">Print report</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const companies = {
+    "Google":     { skills: ["Python", "DSA", "SQL"],              color: "#1967D2" },
+    "TCS":        { skills: ["Java", "Aptitude", "Communication"], color: "#1B5E20" },
+    "Infosys":    { skills: ["Python", "DBMS", "OOP"],             color: "#E65100" },
+    "Amazon":     { skills: ["DSA", "Python", "OOP"],              color: "#F57F17" },
+    "Wipro":      { skills: ["Java", "SQL", "Communication"],      color: "#6A1B9A" },
+    "Accenture":  { skills: ["C++", "DBMS", "Aptitude"],           color: "#880E4F" },
+    "Microsoft":  { skills: ["DSA", "OOP", "OS"],                  color: "#01579B" },
+    "Cognizant":  { skills: ["Java", "SQL", "Aptitude"],           color: "#283593" },
+    "HCL":        { skills: ["C++", "Networking", "OOP"],          color: "#33691E" }
+  };
+
+  const courses = {
+    "Python":          "CS50P on edX or Automate the Boring Stuff (free online)",
+    "Java":            "NPTEL Java Programming or Udemy Java Masterclass",
+    "DSA":             "GeeksforGeeks DSA Self-Paced or Striver's SDE Sheet (free)",
+    "SQL":             "Mode SQL Tutorial (free) or Khan Academy SQL",
+    "DBMS":            "NPTEL DBMS by Partha Pratim Das (free on YouTube)",
+    "OOP":             "Coursera OOP Specialization or Head First Java (book)",
+    "Aptitude":        "IndiaBIX Practice or RS Aggarwal Quantitative Aptitude (book)",
+    "Communication":   "Coursera Communication Skills or Speak Confident English (YouTube)",
+    "C++":             "LearnCPP.com (free) or Udemy C++ Masterclass",
+    "Machine Learning":"Andrew Ng's ML Course on Coursera (free audit)",
+    "React":           "React official docs or Scrimba React Course (free)",
+    "Node.js":         "The Odin Project Node path or Udemy Node.js Bootcamp",
+    "OS":              "NPTEL OS by Mythili Vutukuru or OS concepts (Silberschatz book)",
+    "Networking":      "Cisco Networking Academy (free) or Computer Networking by Kurose"
+  };
+
+  let selectedSkills = new Set();
+  let selectedCompany = null;
+  let currentStep = 0;
+
+  function updateScoreBar() {
+    const raw = document.getElementById('studentScore').value;
+    const val = parseFloat(raw);
+    const hint = document.getElementById('scoreHintText');
+    if (raw === '' || isNaN(val)) { hint.textContent = 'Enter CGPA'; hint.style.color = ''; document.getElementById('scoreBarFill').style.width = '0%'; return; }
+    const clamped = Math.min(10, Math.max(0, val));
+    document.getElementById('scoreBarFill').style.width = (clamped / 10 * 100) + '%';
+    if (clamped >= 6.0) { hint.textContent = '✓ Above threshold (6.0+)'; hint.style.color = 'var(--green)'; }
+    else { hint.textContent = `${(6.0 - clamped).toFixed(2)} more to reach threshold`; hint.style.color = 'var(--amber)'; }
+    document.getElementById('scoreBarFill').style.background = clamped >= 6.0 ? 'var(--green-mid)' : clamped >= 4.0 ? 'var(--amber-mid)' : 'var(--red-mid)';
+  }
+
+  function toggleSkill(el) {
+    const skill = el.dataset.skill;
+    if (selectedSkills.has(skill)) { selectedSkills.delete(skill); el.classList.remove('selected'); }
+    else { selectedSkills.add(skill); el.classList.add('selected'); }
+  }
+
+  function addCustomSkill() {
+    const inp = document.getElementById('customSkill');
+    const val = inp.value.trim();
+    if (!val) return;
+    const normalised = val.charAt(0).toUpperCase() + val.slice(1);
+    if ([...document.querySelectorAll('#skillTagsContainer .tag')].some(t => t.dataset.skill === normalised)) {
+      inp.value = ''; return;
+    }
+    const tag = document.createElement('div');
+    tag.className = 'tag selected';
+    tag.dataset.skill = normalised;
+    tag.textContent = normalised;
+    tag.onclick = function() { toggleSkill(this); };
+    document.getElementById('skillTagsContainer').appendChild(tag);
+    selectedSkills.add(normalised);
+    inp.value = '';
+  }
+
+  function selectCompany(el) {
+    document.querySelectorAll('.company-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedCompany = el.dataset.company;
+  }
+
+  function goToStep(n) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step' + n).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const labels = ['Student details', 'Select company', 'Skill check', 'Result'];
+    for (let i = 0; i < 4; i++) {
+      const circle = document.getElementById('pc' + i);
+      const label  = document.getElementById('pl' + i);
+      circle.classList.remove('active', 'done');
+      label.classList.remove('active', 'done');
+      if (i < currentStep) {
+        circle.classList.add('done'); circle.textContent = '✓';
+        label.classList.add('done');
+      } else if (i === currentStep) {
+        circle.classList.add('active'); circle.textContent = i + 1;
+        label.classList.add('active');
+      } else {
+        circle.textContent = i + 1;
+      }
+      if (i < 3) {
+        const line = document.getElementById('pline' + i);
+        line.classList.toggle('done', i < currentStep);
+      }
+    }
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 3500);
+  }
+
+  function goToStep1() {
+    const name = document.getElementById('studentName').value.trim();
+    const scoreRaw = document.getElementById('studentScore').value;
+    const score = parseFloat(scoreRaw);
+    if (!name) { showError('step0Error', 'Please enter your name.'); return; }
+    if (scoreRaw === '' || isNaN(score) || score < 0 || score > 10) { showError('step0Error', 'Please enter a valid CGPA between 0 and 10.'); return; }
+    if (selectedSkills.size === 0) { showError('step0Error', 'Please select at least one skill.'); return; }
+    goToStep(1);
+  }
+
+  function goToStep2() {
+    if (!selectedCompany) { showError('step1Error', 'Please select a company to continue.'); return; }
+    buildComparison();
+    goToStep(2);
+  }
+
+  function buildComparison() {
+    const required = companies[selectedCompany].skills;
+    const matched  = required.filter(s => selectedSkills.has(s));
+    const missing  = required.filter(s => !selectedSkills.has(s));
+    const pct      = Math.round((matched.length / required.length) * 100);
+    const fillColor = pct >= 70 ? 'var(--green-mid)' : pct >= 40 ? 'var(--amber-mid)' : 'var(--red-mid)';
+    const pctColor  = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
+
+    let rows = '';
+    required.forEach(skill => {
+      const has = selectedSkills.has(skill);
+      rows += `<div class="skill-row">
+        <span class="skill-name-col">${skill}</span>
+        <span class="pill ${has ? 'pill-green' : 'pill-red'}">
+          <span class="dot" style="background:${has ? 'var(--green-mid)' : 'var(--red-mid)'}"></span>
+          ${has ? 'You have this' : 'Missing'}
+        </span>
+      </div>`;
+    });
+
+    document.getElementById('comparisonContent').innerHTML = `
+      <div class="match-header">
+        <span style="font-size:14px;color:var(--text2);">Match for <strong>${selectedCompany}</strong></span>
+        <span class="match-pct" style="color:${pctColor}">${pct}%</span>
+      </div>
+      <div class="match-meter"><div class="match-fill" id="matchFillBar" style="width:0%;background:${fillColor};"></div></div>
+      <div class="match-sub">${matched.length} of ${required.length} required skills matched</div>
+      <div class="skill-table">${rows}</div>
+    `;
+    setTimeout(() => {
+      const bar = document.getElementById('matchFillBar');
+      if (bar) bar.style.width = pct + '%';
+    }, 80);
+  }
+
+  function goToStep3() {
+    buildResult();
+    goToStep(3);
+  }
+
+  function buildResult() {
+    const name     = document.getElementById('studentName').value.trim();
+    const score    = parseFloat(document.getElementById('studentScore').value);
+    const required = companies[selectedCompany].skills;
+    const matched  = required.filter(s => selectedSkills.has(s));
+    const missing  = required.filter(s => !selectedSkills.has(s));
+    const pct      = Math.round((matched.length / required.length) * 100);
+    const ready    = pct >= 70 && score >= 6.0;
+
+    let suggestHTML = '';
+    if (missing.length > 0) {
+      const items = missing.map(skill => {
+        const course = courses[skill] || 'Search for beginner tutorials on YouTube or Coursera';
+        return `<div class="suggest-item">
+          <div class="suggest-icon">
+            <svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14"/></svg>
+          </div>
+          <div>
+            <div class="suggest-skill">${skill}</div>
+            <div class="suggest-course">${course}</div>
+          </div>
+        </div>`;
+      }).join('');
+      suggestHTML = `<div class="section-label">Suggested learning resources</div><div>${items}</div>`;
+    } else {
+      suggestHTML = `<div class="all-good">You have all required skills for ${selectedCompany}! Keep practising to ace the interview.</div>`;
+    }
+
+    let alertHTML = '';
+    if (!ready && pct >= 70 && score < 6.0) {
+      alertHTML = `<div class="alert-box alert-amber">Your skills look great (${pct}% match), but your CGPA (${score.toFixed(2)}/10) is below the 6.0 threshold. Focus on your academics and coursework to improve your CGPA.</div>`;
+    } else if (!ready && pct < 70 && score >= 6.0) {
+      alertHTML = `<div class="alert-box alert-amber">Your CGPA is solid (${score.toFixed(2)}/10), but your skill match is only ${pct}%. Work through the missing skills listed below to improve your chances.</div>`;
+    }
+
+    document.getElementById('resultContent').innerHTML = `
+      <div class="result-hero">
+        <div class="result-icon">${ready ? '🎯' : '📚'}</div>
+        <div class="result-name">${name} — <em>${selectedCompany}</em></div>
+        <div class="result-status-badge ${ready ? 'badge-ready' : 'badge-notready'}">
+          ${ready ? '✓ Ready for placement' : '✗ Not yet ready'}
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" style="color:${pct >= 70 ? 'var(--green)' : 'var(--red)'};">${pct}%</div>
+          <div class="stat-lbl">Skill match</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:${score >= 6.0 ? 'var(--green)' : 'var(--red)'};">${score.toFixed(2)}<span style="font-size:14px;font-weight:400;">/10</span></div>
+          <div class="stat-lbl">CGPA</div>
+        </div>
+      </div>
+      ${alertHTML}
+      ${suggestHTML}
+    `;
+  }
+
+  function restart() {
+    selectedSkills = new Set();
+    selectedCompany = null;
+    document.getElementById('studentName').value = '';
+    document.getElementById('studentScore').value = '';
+    document.getElementById('scoreBarFill').style.width = '0%';
+    document.getElementById('scoreHintText').textContent = 'Enter CGPA';
+    document.getElementById('scoreHintText').style.color = '';
+    document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+    document.querySelectorAll('.company-card').forEach(c => c.classList.remove('selected'));
+    goToStep(0);
+  }
+</script>
+</body>
+</html>
