@@ -1,38 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>College Placement Readiness Tracker</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PlaceReady — Campus Placement Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f6f5f2;
-      --surface: #ffffff;
-      --surface2: #f0efe9;
-      --border: #e2e0d8;
-      --border2: #cac8bf;
-      --text: #1a1916;
-      --text2: #6b6a65;
-      --text3: #9c9b97;
-      --blue: #185FA5;
-      --blue-light: #E6F1FB;
-      --blue-mid: #378ADD;
-      --blue-dark: #0C447C;
-      --green: #3B6D11;
-      --green-light: #EAF3DE;
-      --green-mid: #639922;
-      --red: #A32D2D;
-      --red-light: #FCEBEB;
-      --red-mid: #E24B4A;
-      --amber: #854F0B;
-      --amber-light: #FAEEDA;
-      --amber-mid: #BA7517;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
+      --bg: #0c0e13;
+      --bg2: #12151c;
+      --surface: #181b24;
+      --surface2: #1f2330;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.14);
+      --text: #f0ede8;
+      --text2: #9a97a3;
+      --text3: #5c5a66;
+      --gold: #c9a84c;
+      --gold-light: rgba(201,168,76,0.12);
+      --gold-dim: rgba(201,168,76,0.35);
+      --green: #4ade80;
+      --green-bg: rgba(74,222,128,0.1);
+      --red: #f87171;
+      --red-bg: rgba(248,113,113,0.1);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251,191,36,0.1);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96,165,250,0.1);
+      --radius: 12px;
+      --radius-lg: 18px;
+      --glow: 0 0 40px rgba(201,168,76,0.08);
     }
 
     body {
@@ -43,545 +42,449 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem 4rem;
+      padding: 0 1rem 5rem;
+      overflow-x: hidden;
     }
 
+    /* BG grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* HEADER */
     header {
+      width: 100%;
+      max-width: 700px;
+      padding: 3.5rem 0 2.5rem;
       text-align: center;
-      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
-    header .eyebrow {
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold-light);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 4px 14px;
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 8px;
+      color: var(--gold);
+      margin-bottom: 18px;
     }
+
+    .logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
     header h1 {
-      font-size: 28px;
-      font-weight: 600;
+      font-family: 'Fraunces', serif;
+      font-size: clamp(32px, 6vw, 50px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
       color: var(--text);
-      line-height: 1.2;
     }
+
+    header h1 em { font-style: italic; color: var(--gold); }
 
     header p {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--text2);
-      margin-top: 6px;
+      margin-top: 10px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
     }
 
-    .container {
-      width: 100%;
-      max-width: 680px;
-    }
-
-    /* Progress */
+    /* PROGRESS */
     .progress-wrap {
+      width: 100%;
+      max-width: 700px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
+      position: relative;
+      z-index: 1;
     }
 
-    .prog-step {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
+    .prog-step { display: flex; align-items: center; gap: 8px; flex: 1; }
 
     .prog-circle {
-      width: 28px;
-      height: 28px;
+      width: 30px; height: 30px;
       border-radius: 50%;
       border: 1.5px solid var(--border2);
       background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: var(--text3);
       flex-shrink: 0;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
     }
+    .prog-circle.active { background: var(--gold); border-color: var(--gold); color: #0c0e13; box-shadow: 0 0 16px rgba(201,168,76,0.4); }
+    .prog-circle.done { background: var(--green-bg); border-color: var(--green); color: var(--green); }
 
-    .prog-circle.active {
-      background: var(--blue);
-      border-color: var(--blue);
-      color: white;
-    }
-
-    .prog-circle.done {
-      background: var(--green-light);
-      border-color: var(--green-mid);
-      color: var(--green);
-    }
-
-    .prog-label {
-      font-size: 12px;
-      color: var(--text3);
-      white-space: nowrap;
-      display: none;
-    }
-
-    @media (min-width: 500px) { .prog-label { display: block; } }
-
-    .prog-label.active { color: var(--blue); font-weight: 500; }
+    .prog-label { font-size: 11px; color: var(--text3); white-space: nowrap; display: none; }
+    @media(min-width:500px){ .prog-label { display: block; } }
+    .prog-label.active { color: var(--gold); font-weight: 600; }
     .prog-label.done { color: var(--green); }
 
-    .prog-line {
-      flex: 1;
-      height: 1.5px;
-      background: var(--border);
-      transition: background 0.3s;
-    }
+    .prog-line { flex: 1; height: 1px; background: var(--border); transition: background 0.4s; }
+    .prog-line.done { background: var(--green); }
 
-    .prog-line.done { background: var(--green-mid); }
+    /* CONTAINER */
+    .container { width: 100%; max-width: 700px; position: relative; z-index: 1; }
 
-    /* Card */
+    /* CARD */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.75rem;
+      padding: 2rem;
       display: none;
+      box-shadow: var(--glow), 0 1px 0 rgba(255,255,255,0.04) inset;
+      animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
     }
-
     .card.active { display: block; }
 
-    .card-header {
-      margin-bottom: 1.5rem;
-    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
     .card-badge {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text3);
-      margin-bottom: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 4px; opacity: 0.8;
     }
+    .card-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
 
-    .card-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    /* Form elements */
+    /* FORM */
     label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-      margin-bottom: 6px;
-      margin-top: 18px;
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text2); margin-bottom: 6px; margin-top: 20px;
+      letter-spacing: 0.05em; text-transform: uppercase;
     }
-
     label:first-of-type { margin-top: 0; }
 
-    input[type="text"],
-    input[type="number"] {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
+    input[type="text"], input[type="number"] {
+      width: 100%; padding: 11px 14px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      background: var(--bg2);
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
+      font-size: 14px; color: var(--text);
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     }
+    input::placeholder { color: var(--text3); }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
 
-    input[type="text"]:focus,
-    input[type="number"]:focus {
-      border-color: var(--blue-mid);
-      box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
-    }
-
-    /* Skill tags */
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
+    /* SKILL TAGS */
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
     .tag {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 13px;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 20px; padding: 5px 13px;
+      font-size: 12px; color: var(--text2);
+      cursor: pointer; transition: all 0.15s; user-select: none;
     }
+    .tag:hover { border-color: var(--gold-dim); color: var(--text); }
+    .tag.selected { background: var(--gold-light); border-color: var(--gold); color: var(--gold); font-weight: 600; }
 
-    .tag:hover { border-color: var(--border2); color: var(--text); }
-
-    .tag.selected {
-      background: var(--blue-light);
-      border-color: var(--blue-mid);
-      color: var(--blue-dark);
-      font-weight: 500;
-    }
-
-    .add-skill-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
+    .add-skill-row { display: flex; gap: 8px; margin-top: 10px; }
     .add-skill-row input { flex: 1; }
 
-    /* Company grid */
-    .company-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
+    /* SCORE BAR */
+    .score-hint { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .score-bar { flex: 1; height: 5px; background: var(--border2); border-radius: 3px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .score-hint-text { font-size: 12px; color: var(--text3); white-space: nowrap; font-family: 'DM Mono', monospace; }
 
-    @media (max-width: 480px) { .company-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* COMPANY GRID */
+    .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    @media(max-width:500px){ .company-grid { grid-template-columns: repeat(2, 1fr); } }
 
     .company-card {
       border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px 12px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.15s;
-      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px 12px; cursor: pointer;
+      text-align: center; transition: all 0.2s;
+      background: var(--bg2);
+      position: relative; overflow: hidden;
     }
-
-    .company-card:hover {
-      background: var(--surface2);
-      border-color: var(--border2);
+    .company-card::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.2s;
     }
-
-    .company-card.selected {
-      background: var(--blue-light);
-      border: 2px solid var(--blue-mid);
-    }
+    .company-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+    .company-card.selected { border: 1.5px solid var(--gold); background: var(--gold-light); }
+    .company-card.selected .co-name { color: var(--gold); }
 
     .co-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      width: 38px; height: 38px; border-radius: 10px;
       margin: 0 auto 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
       font-family: 'DM Mono', monospace;
     }
+    .co-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .co-skills { font-size: 10px; color: var(--text3); line-height: 1.6; }
+    .co-salary { font-size: 10px; color: var(--gold); margin-top: 4px; font-family: 'DM Mono', monospace; }
 
-    .co-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .co-skills { font-size: 11px; color: var(--text3); line-height: 1.5; }
-    .company-card.selected .co-name { color: var(--blue-dark); }
-
-    /* Comparison */
-    .match-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 6px;
-    }
-
-    .match-pct { font-size: 22px; font-weight: 600; }
-
-    .match-meter {
-      height: 8px;
-      background: var(--surface2);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-
-    .match-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
-
-    .match-sub { font-size: 12px; color: var(--text3); margin-bottom: 1.25rem; }
+    /* MATCH METER */
+    .match-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .match-pct { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; }
+    .match-meter { height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .match-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+    .match-sub { font-size: 12px; color: var(--text3); margin-bottom: 1.25rem; font-family: 'DM Mono', monospace; }
 
     .skill-table { width: 100%; }
-
     .skill-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 11px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px;
     }
-
     .skill-row:last-child { border-bottom: none; }
     .skill-name-col { font-weight: 500; }
 
     .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace;
     }
+    .pill-green { background: var(--green-bg); color: var(--green); }
+    .pill-red { background: var(--red-bg); color: var(--red); }
 
-    .pill-green { background: var(--green-light); color: var(--green); }
-    .pill-red { background: var(--red-light); color: var(--red); }
-
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    /* RADAR CHART */
+    .radar-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      margin: 1.5rem 0; padding: 1rem;
+      background: var(--bg2); border-radius: var(--radius);
+      border: 1px solid var(--border);
     }
+    .radar-title { font-size: 11px; color: var(--text3); margin-bottom: 1rem; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+    #radarCanvas { max-width: 280px; width: 100%; }
 
-    /* Result */
+    /* RESULT */
     .result-hero {
-      text-align: center;
-      padding: 1.5rem 0 1rem;
+      text-align: center; padding: 2rem 0 1.5rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
     }
-
-    .result-icon { font-size: 52px; margin-bottom: 0.75rem; line-height: 1; }
-    .result-name { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+    .result-icon { font-size: 56px; margin-bottom: 1rem; line-height: 1; }
+    .result-name { font-family: 'Fraunces', serif; font-size: 18px; color: var(--text); margin-bottom: 8px; }
     .result-status-badge {
-      display: inline-block;
-      padding: 6px 20px;
-      border-radius: 20px;
-      font-size: 15px;
-      font-weight: 600;
+      display: inline-block; padding: 7px 22px;
+      border-radius: 30px; font-size: 14px; font-weight: 700;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
     }
+    .badge-ready { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+    .badge-notready { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
 
-    .badge-ready { background: var(--green-light); color: var(--green); }
-    .badge-notready { background: var(--red-light); color: var(--red); }
-
-    .result-company { font-size: 13px; color: var(--text3); margin-top: 6px; }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 1.25rem 0;
-    }
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1.25rem 0; }
+    @media(max-width:420px){ .stat-grid { grid-template-columns: repeat(2, 1fr); } }
 
     .stat-card {
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      text-align: center;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 12px; text-align: center;
     }
-
-    .stat-val { font-size: 26px; font-weight: 600; }
-    .stat-lbl { font-size: 12px; color: var(--text3); margin-top: 3px; }
+    .stat-val { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; }
+    .stat-lbl { font-size: 10px; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.07em; font-family: 'DM Mono', monospace; }
 
     .section-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 10px;
-      margin-top: 1.25rem;
+      font-size: 11px; font-weight: 600; color: var(--text3);
+      margin: 1.5rem 0 10px;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-family: 'DM Mono', monospace;
     }
 
-    .suggest-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 0;
+    /* ROADMAP TIMELINE */
+    .roadmap { margin-top: 0.5rem; }
+    .roadmap-item {
+      display: flex; gap: 14px; padding: 12px 0;
       border-bottom: 1px solid var(--border);
     }
-
-    .suggest-item:last-child { border-bottom: none; }
-
-    .suggest-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: var(--blue-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
+    .roadmap-item:last-child { border-bottom: none; }
+    .roadmap-week {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gold); font-weight: 500; width: 48px; flex-shrink: 0;
+      padding-top: 2px;
     }
+    .roadmap-content { flex: 1; }
+    .roadmap-skill { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .roadmap-course { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .roadmap-link {
+      display: inline-block; margin-top: 4px;
+      font-size: 11px; color: var(--gold);
+      text-decoration: none; font-family: 'DM Mono', monospace;
+    }
+    .roadmap-link:hover { text-decoration: underline; }
 
-    .suggest-icon svg { width: 14px; height: 14px; stroke: var(--blue); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .suggest-skill { font-size: 14px; font-weight: 600; color: var(--text); }
-    .suggest-course { font-size: 13px; color: var(--text2); margin-top: 2px; }
+    /* AI ANALYSIS BOX */
+    .ai-box {
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(96,165,250,0.04));
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius);
+      padding: 16px 18px; margin-top: 1.25rem;
+    }
+    .ai-box-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .ai-badge {
+      background: var(--gold-light); border: 1px solid var(--gold-dim);
+      border-radius: 4px; padding: 2px 7px;
+      font-size: 9px; font-weight: 700; color: var(--gold);
+      letter-spacing: 0.08em; font-family: 'DM Mono', monospace;
+    }
+    .ai-box-header span { font-size: 13px; font-weight: 600; color: var(--text); }
+    .ai-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .ai-loading {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text3); font-size: 13px;
+    }
+    .ai-spinner {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--border2); border-top-color: var(--gold);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .alert-box {
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      margin-top: 1rem;
-      line-height: 1.5;
+      padding: 12px 16px; border-radius: var(--radius);
+      font-size: 13px; margin-top: 1rem; line-height: 1.6;
     }
+    .alert-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
 
-    .alert-amber { background: var(--amber-light); color: var(--amber); }
+    /* SUGGEST ITEMS */
+    .suggest-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .suggest-item:last-child { border-bottom: none; }
+    .suggest-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--gold-light); border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 14px;
+    }
+    .suggest-skill { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .suggest-course { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
     .all-good {
-      text-align: center;
-      padding: 1rem;
-      font-size: 14px;
-      color: var(--text2);
-      background: var(--green-light);
-      border-radius: var(--radius-sm);
-      margin-top: 1rem;
+      text-align: center; padding: 1.25rem;
+      font-size: 14px; color: var(--green);
+      background: var(--green-bg); border-radius: var(--radius);
+      margin-top: 1rem; border: 1px solid rgba(74,222,128,0.2);
     }
 
-    /* Buttons */
+    /* BUTTONS */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 20px;
-      border: 1px solid var(--border2);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border: 1px solid var(--border2);
+      border-radius: var(--radius); background: var(--surface2);
+      color: var(--text2); font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600; cursor: pointer;
       transition: all 0.15s;
     }
-
-    .btn:hover { background: var(--surface2); }
+    .btn:hover { border-color: var(--text3); color: var(--text); }
     .btn:active { transform: scale(0.98); }
 
     .btn.primary {
-      background: var(--blue);
-      color: white;
-      border-color: var(--blue);
+      background: var(--gold); color: #0c0e13;
+      border-color: var(--gold); font-weight: 700;
     }
+    .btn.primary:hover { background: #dbb95a; box-shadow: 0 0 20px rgba(201,168,76,0.3); }
+    .btn.sm { padding: 8px 14px; font-size: 12px; }
 
-    .btn.primary:hover { background: var(--blue-dark); }
-
-    .btn.sm { padding: 8px 14px; font-size: 13px; }
-
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 1.5rem;
-      align-items: center;
-    }
-
+    .btn-row { display: flex; gap: 10px; margin-top: 1.75rem; align-items: center; }
     .btn-row.centered { justify-content: center; }
+    .btn-row.spread { justify-content: space-between; }
 
-    .error-msg {
-      font-size: 12px;
-      color: var(--red);
-      margin-top: 8px;
-      display: none;
+    .error-msg { font-size: 12px; color: var(--red); margin-top: 8px; display: none; font-family: 'DM Mono', monospace; }
+
+    .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+    /* SHARE STRIP */
+    .share-strip {
+      display: flex; gap: 8px; align-items: center;
+      padding: 12px 16px; background: var(--bg2);
+      border-radius: var(--radius); border: 1px solid var(--border);
+      margin-top: 1.25rem;
     }
-
-    /* Score helper */
-    .score-hint {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 6px;
+    .share-strip span { font-size: 12px; color: var(--text3); flex: 1; font-family: 'DM Mono', monospace; }
+    .share-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 12px;
+      font-weight: 600; cursor: pointer; border: 1px solid var(--border2);
+      background: var(--surface2); color: var(--text2); transition: all 0.15s;
     }
+    .share-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-    .score-bar {
-      flex: 1;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
+    /* PRINT */
+    @media print {
+      body { background: white; color: black; }
+      .card { border: 1px solid #ccc; box-shadow: none; display: block !important; }
+      .btn-row, .progress-wrap, header { display: none !important; }
     }
-
-    .score-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: var(--blue-mid);
-      transition: width 0.3s;
-    }
-
-    .score-hint-text { font-size: 12px; color: var(--text3); white-space: nowrap; }
-
-    /* Divider */
-    .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
-
-    /* Flowchart mini-steps */
-    .flow-steps {
-      display: flex;
-      gap: 0;
-      margin-bottom: 1.5rem;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .flow-step {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      flex-shrink: 0;
-    }
-
-    .flow-node {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--text3);
-      white-space: nowrap;
-    }
-
-    .flow-arrow { font-size: 11px; color: var(--border2); padding: 0 4px; }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="eyebrow">Campus Recruitment Tool</div>
-  <h1>Placement Readiness Tracker</h1>
-  <p>Check if you're ready for campus placements at your dream company</p>
+  <div class="logo-badge"><div class="logo-dot"></div> PlaceReady Intelligence</div>
+  <h1>Campus Placement<br><em>Readiness Tracker</em></h1>
+  <p>AI-powered gap analysis to help you land your dream company</p>
 </header>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="prog-step">
+    <div class="prog-circle active" id="pc0">1</div>
+    <div class="prog-label active" id="pl0">Your Profile</div>
+  </div>
+  <div class="prog-line" id="pline0"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc1">2</div>
+    <div class="prog-label" id="pl1">Target Company</div>
+  </div>
+  <div class="prog-line" id="pline1"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc2">3</div>
+    <div class="prog-label" id="pl2">Skill Check</div>
+  </div>
+  <div class="prog-line" id="pline2"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc3">4</div>
+    <div class="prog-label" id="pl3">AI Report</div>
+  </div>
+</div>
 
 <div class="container">
 
-  <!-- Progress -->
-  <div class="progress-wrap" id="progressWrap">
-    <div class="prog-circle active" id="pc0">1</div>
-    <div class="prog-label active" id="pl0">Student details</div>
-    <div class="prog-line" id="pline0"></div>
-    <div class="prog-circle" id="pc1">2</div>
-    <div class="prog-label" id="pl1">Select company</div>
-    <div class="prog-line" id="pline1"></div>
-    <div class="prog-circle" id="pc2">3</div>
-    <div class="prog-label" id="pl2">Skill check</div>
-    <div class="prog-line" id="pline2"></div>
-    <div class="prog-circle" id="pc3">4</div>
-    <div class="prog-label" id="pl3">Result</div>
-  </div>
-
-  <!-- Step 0: Student Details -->
+  <!-- Step 0: Profile -->
   <div class="card active" id="step0">
-    <div class="card-header">
-      <div class="card-badge">Step 1 of 4</div>
-      <div class="card-title">Your details</div>
-    </div>
+    <div class="card-badge">Step 1 of 4</div>
+    <div class="card-title" style="margin-bottom:1.5rem">Your details</div>
 
-    <label>Full name</label>
-    <input type="text" id="studentName" placeholder="e.g. Priya Sharma" />
+    <label>Full Name</label>
+    <input type="text" id="studentName" placeholder="e.g. Priya Sharma" autocomplete="name"/>
+
+    <label>Branch / Degree</label>
+    <input type="text" id="studentBranch" placeholder="e.g. B.Tech CSE, 3rd year"/>
 
     <label>CGPA <span style="font-weight:400;color:var(--text3)">(out of 10)</span></label>
-    <input type="number" id="studentScore" min="0" max="10" step="0.01" placeholder="e.g. 7.8" oninput="updateScoreBar()" />
+    <input type="number" id="studentScore" min="0" max="10" step="0.01" placeholder="e.g. 7.8" oninput="updateScoreBar()"/>
     <div class="score-hint">
       <div class="score-bar"><div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div></div>
       <div class="score-hint-text" id="scoreHintText">Enter CGPA</div>
     </div>
 
-    <label>Your skills <span style="font-weight:400;color:var(--text3)">— select all that apply</span></label>
+    <label>Your Skills <span style="font-weight:400;color:var(--text3)">— select all that apply</span></label>
     <div class="skill-tags" id="skillTagsContainer">
       <div class="tag" data-skill="Python" onclick="toggleSkill(this)">Python</div>
       <div class="tag" data-skill="Java" onclick="toggleSkill(this)">Java</div>
@@ -597,9 +500,13 @@
       <div class="tag" data-skill="Node.js" onclick="toggleSkill(this)">Node.js</div>
       <div class="tag" data-skill="OS" onclick="toggleSkill(this)">OS</div>
       <div class="tag" data-skill="Networking" onclick="toggleSkill(this)">Networking</div>
+      <div class="tag" data-skill="System Design" onclick="toggleSkill(this)">System Design</div>
+      <div class="tag" data-skill="Git" onclick="toggleSkill(this)">Git</div>
+      <div class="tag" data-skill="Cloud" onclick="toggleSkill(this)">Cloud</div>
+      <div class="tag" data-skill="Linux" onclick="toggleSkill(this)">Linux</div>
     </div>
     <div class="add-skill-row">
-      <input type="text" id="customSkill" placeholder="Add a custom skill..." onkeydown="if(event.key==='Enter')addCustomSkill()" />
+      <input type="text" id="customSkill" placeholder="Add a skill..." onkeydown="if(event.key==='Enter')addCustomSkill()"/>
       <button class="btn sm" onclick="addCustomSkill()">+ Add</button>
     </div>
 
@@ -609,58 +516,65 @@
     </div>
   </div>
 
-  <!-- Step 1: Select Company -->
+  <!-- Step 1: Company -->
   <div class="card" id="step1">
-    <div class="card-header">
-      <div class="card-badge">Step 2 of 4</div>
-      <div class="card-title">Select target company</div>
-    </div>
+    <div class="card-badge">Step 2 of 4</div>
+    <div class="card-title" style="margin-bottom:1.5rem">Select target company</div>
 
     <div class="company-grid" id="companyGrid">
       <div class="company-card" data-company="Google" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#E8F0FE;color:#1967D2;">G</div>
+        <div class="co-logo" style="background:#1a2744;color:#4285F4;">G</div>
         <div class="co-name">Google</div>
-        <div class="co-skills">Python · DSA · SQL</div>
-      </div>
-      <div class="company-card" data-company="TCS" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#E8F5E9;color:#1B5E20;">T</div>
-        <div class="co-name">TCS</div>
-        <div class="co-skills">Java · Aptitude · Communication</div>
-      </div>
-      <div class="company-card" data-company="Infosys" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#FFF3E0;color:#E65100;">I</div>
-        <div class="co-name">Infosys</div>
-        <div class="co-skills">Python · DBMS · OOP</div>
-      </div>
-      <div class="company-card" data-company="Amazon" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#FFF8E1;color:#F57F17;">A</div>
-        <div class="co-name">Amazon</div>
-        <div class="co-skills">DSA · Python · OOP</div>
-      </div>
-      <div class="company-card" data-company="Wipro" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#F3E5F5;color:#6A1B9A;">W</div>
-        <div class="co-name">Wipro</div>
-        <div class="co-skills">Java · SQL · Communication</div>
-      </div>
-      <div class="company-card" data-company="Accenture" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#FCE4EC;color:#880E4F;">Ac</div>
-        <div class="co-name">Accenture</div>
-        <div class="co-skills">C++ · DBMS · Aptitude</div>
+        <div class="co-skills">Python · DSA · SQL · System Design</div>
+        <div class="co-salary">₹12–45 LPA</div>
       </div>
       <div class="company-card" data-company="Microsoft" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#E3F2FD;color:#01579B;">M</div>
+        <div class="co-logo" style="background:#1a2035;color:#00A4EF;">M</div>
         <div class="co-name">Microsoft</div>
-        <div class="co-skills">DSA · OOP · OS</div>
+        <div class="co-skills">DSA · OOP · OS · System Design</div>
+        <div class="co-salary">₹10–40 LPA</div>
+      </div>
+      <div class="company-card" data-company="Amazon" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#1f1a10;color:#FF9900;">A</div>
+        <div class="co-name">Amazon</div>
+        <div class="co-skills">DSA · Python · OOP · SQL</div>
+        <div class="co-salary">₹10–35 LPA</div>
+      </div>
+      <div class="company-card" data-company="Infosys" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#1a1f1a;color:#007CC2;">I</div>
+        <div class="co-name">Infosys</div>
+        <div class="co-skills">Python · DBMS · OOP · Communication</div>
+        <div class="co-salary">₹3.6–8 LPA</div>
+      </div>
+      <div class="company-card" data-company="TCS" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#1a2020;color:#0089CF;">T</div>
+        <div class="co-name">TCS</div>
+        <div class="co-skills">Java · Aptitude · Communication · SQL</div>
+        <div class="co-salary">₹3.5–7 LPA</div>
+      </div>
+      <div class="company-card" data-company="Wipro" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#1e1a25;color:#9B4F97;">W</div>
+        <div class="co-name">Wipro</div>
+        <div class="co-skills">Java · SQL · Communication · OOP</div>
+        <div class="co-salary">₹3.5–6.5 LPA</div>
+      </div>
+      <div class="company-card" data-company="Accenture" onclick="selectCompany(this)">
+        <div class="co-logo" style="background:#1f1a20;color:#A100FF;">Ac</div>
+        <div class="co-name">Accenture</div>
+        <div class="co-skills">C++ · DBMS · Aptitude · Python</div>
+        <div class="co-salary">₹4.5–9 LPA</div>
       </div>
       <div class="company-card" data-company="Cognizant" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#E8EAF6;color:#283593;">C</div>
+        <div class="co-logo" style="background:#1a1d25;color:#0033A0;">C</div>
         <div class="co-name">Cognizant</div>
-        <div class="co-skills">Java · SQL · Aptitude</div>
+        <div class="co-skills">Java · SQL · Aptitude · OOP</div>
+        <div class="co-salary">₹4–7.5 LPA</div>
       </div>
       <div class="company-card" data-company="HCL" onclick="selectCompany(this)">
-        <div class="co-logo" style="background:#F1F8E9;color:#33691E;">H</div>
+        <div class="co-logo" style="background:#1a201a;color:#0076BE;">H</div>
         <div class="co-name">HCL</div>
-        <div class="co-skills">C++ · Networking · OOP</div>
+        <div class="co-skills">C++ · Networking · OOP · Linux</div>
+        <div class="co-salary">₹3.5–6 LPA</div>
       </div>
     </div>
 
@@ -673,28 +587,41 @@
 
   <!-- Step 2: Skill Comparison -->
   <div class="card" id="step2">
-    <div class="card-header">
-      <div class="card-badge">Step 3 of 4</div>
-      <div class="card-title">Skill comparison</div>
-    </div>
+    <div class="card-badge">Step 3 of 4</div>
+    <div class="card-title" style="margin-bottom:1.5rem">Skill comparison</div>
     <div id="comparisonContent"></div>
+    <!-- Radar -->
+    <div class="radar-wrap" id="radarWrap" style="display:none">
+      <div class="radar-title">Skill coverage radar</div>
+      <canvas id="radarCanvas" width="280" height="240"></canvas>
+    </div>
     <div class="btn-row">
       <button class="btn" onclick="goToStep(1)">← Back</button>
-      <button class="btn primary" onclick="goToStep3()">See result →</button>
+      <button class="btn primary" onclick="goToStep3()">Get AI report →</button>
     </div>
   </div>
 
   <!-- Step 3: Result -->
   <div class="card" id="step3">
-    <div class="card-header">
-      <div class="card-badge">Step 4 of 4 — Final Result</div>
-      <div class="card-title">Placement readiness report</div>
-    </div>
+    <div class="card-badge">Step 4 of 4 — AI Analysis</div>
+    <div class="card-title" style="margin-bottom:1.5rem">Placement readiness report</div>
     <div id="resultContent"></div>
+
+    <!-- AI box -->
+    <div class="ai-box" id="aiBox">
+      <div class="ai-box-header">
+        <div class="ai-badge">AI</div>
+        <span>Personalised gap analysis</span>
+      </div>
+      <div id="aiText" class="ai-text">
+        <div class="ai-loading"><div class="ai-spinner"></div> Generating your personalised analysis…</div>
+      </div>
+    </div>
+
     <div class="divider"></div>
     <div class="btn-row centered">
-      <button class="btn" onclick="restart()">← Check another student</button>
-      <button class="btn primary" onclick="window.print()">Print report</button>
+      <button class="btn" onclick="restart()">↺ Start over</button>
+      <button class="btn primary" onclick="window.print()">⬇ Print report</button>
     </div>
   </div>
 
@@ -702,32 +629,36 @@
 
 <script>
   const companies = {
-    "Google":     { skills: ["Python", "DSA", "SQL"],              color: "#1967D2" },
-    "TCS":        { skills: ["Java", "Aptitude", "Communication"], color: "#1B5E20" },
-    "Infosys":    { skills: ["Python", "DBMS", "OOP"],             color: "#E65100" },
-    "Amazon":     { skills: ["DSA", "Python", "OOP"],              color: "#F57F17" },
-    "Wipro":      { skills: ["Java", "SQL", "Communication"],      color: "#6A1B9A" },
-    "Accenture":  { skills: ["C++", "DBMS", "Aptitude"],           color: "#880E4F" },
-    "Microsoft":  { skills: ["DSA", "OOP", "OS"],                  color: "#01579B" },
-    "Cognizant":  { skills: ["Java", "SQL", "Aptitude"],           color: "#283593" },
-    "HCL":        { skills: ["C++", "Networking", "OOP"],          color: "#33691E" }
+    "Google":     { skills: ["Python","DSA","SQL","System Design"],          salary:"₹12–45 LPA", roles:"SWE, SRE, Data Analyst" },
+    "Microsoft":  { skills: ["DSA","OOP","OS","System Design"],              salary:"₹10–40 LPA", roles:"SWE, PM, Data Engineer" },
+    "Amazon":     { skills: ["DSA","Python","OOP","SQL"],                    salary:"₹10–35 LPA", roles:"SDE, Cloud Ops, QA" },
+    "Infosys":    { skills: ["Python","DBMS","OOP","Communication"],         salary:"₹3.6–8 LPA",  roles:"Systems Engineer, Analyst" },
+    "TCS":        { skills: ["Java","Aptitude","Communication","SQL"],       salary:"₹3.5–7 LPA",  roles:"Software Developer, QA" },
+    "Wipro":      { skills: ["Java","SQL","Communication","OOP"],            salary:"₹3.5–6.5 LPA",roles:"Project Engineer" },
+    "Accenture":  { skills: ["C++","DBMS","Aptitude","Python"],              salary:"₹4.5–9 LPA",  roles:"Associate SE, Analyst" },
+    "Cognizant":  { skills: ["Java","SQL","Aptitude","OOP"],                 salary:"₹4–7.5 LPA",  roles:"Programmer Analyst" },
+    "HCL":        { skills: ["C++","Networking","OOP","Linux"],              salary:"₹3.5–6 LPA",  roles:"Graduate Engineer Trainee" },
   };
 
-  const courses = {
-    "Python":          "CS50P on edX or Automate the Boring Stuff (free online)",
-    "Java":            "NPTEL Java Programming or Udemy Java Masterclass",
-    "DSA":             "GeeksforGeeks DSA Self-Paced or Striver's SDE Sheet (free)",
-    "SQL":             "Mode SQL Tutorial (free) or Khan Academy SQL",
-    "DBMS":            "NPTEL DBMS by Partha Pratim Das (free on YouTube)",
-    "OOP":             "Coursera OOP Specialization or Head First Java (book)",
-    "Aptitude":        "IndiaBIX Practice or RS Aggarwal Quantitative Aptitude (book)",
-    "Communication":   "Coursera Communication Skills or Speak Confident English (YouTube)",
-    "C++":             "LearnCPP.com (free) or Udemy C++ Masterclass",
-    "Machine Learning":"Andrew Ng's ML Course on Coursera (free audit)",
-    "React":           "React official docs or Scrimba React Course (free)",
-    "Node.js":         "The Odin Project Node path or Udemy Node.js Bootcamp",
-    "OS":              "NPTEL OS by Mythili Vutukuru or OS concepts (Silberschatz book)",
-    "Networking":      "Cisco Networking Academy (free) or Computer Networking by Kurose"
+  const courseMap = {
+    "Python":        { course:"CS50P on edX or Automate the Boring Stuff", link:"https://cs50.harvard.edu/python/", icon:"🐍" },
+    "Java":          { course:"NPTEL Java Programming or Udemy Java Masterclass", link:"https://nptel.ac.in/courses/106/105/106105191/", icon:"☕" },
+    "DSA":           { course:"Striver's SDE Sheet (free) or GFG DSA Course", link:"https://takeuforward.org/strivers-a2z-dsa-course/", icon:"🌲" },
+    "SQL":           { course:"Mode SQL Tutorial (free) or W3Schools SQL", link:"https://mode.com/sql-tutorial/", icon:"🗄️" },
+    "DBMS":          { course:"NPTEL DBMS by Partha Pratim Das", link:"https://nptel.ac.in/courses/106/105/106105175/", icon:"💾" },
+    "OOP":           { course:"Coursera OOP Specialization or Head First Java", link:"https://www.coursera.org/learn/object-oriented-java", icon:"🧱" },
+    "Aptitude":      { course:"IndiaBIX or RS Aggarwal Quantitative Aptitude", link:"https://www.indiabix.com/", icon:"🧮" },
+    "Communication": { course:"Speak Confident English (YouTube) or Coursera", link:"https://www.youtube.com/@SpeakEnglishWithVanessa", icon:"🗣️" },
+    "C++":           { course:"LearnCPP.com (free) or Udemy C++ Masterclass", link:"https://learncpp.com", icon:"⚙️" },
+    "Machine Learning":{ course:"Andrew Ng's ML Course on Coursera (audit free)", link:"https://www.coursera.org/learn/machine-learning", icon:"🤖" },
+    "React":         { course:"React official docs or Scrimba React Course", link:"https://react.dev/learn", icon:"⚛️" },
+    "Node.js":       { course:"The Odin Project Node path or Udemy Bootcamp", link:"https://www.theodinproject.com/paths/full-stack-javascript", icon:"🟢" },
+    "OS":            { course:"NPTEL OS by Mythili Vutukuru", link:"https://nptel.ac.in/courses/106/106/106106144/", icon:"🖥️" },
+    "Networking":    { course:"Cisco Networking Academy (free)", link:"https://skillsforall.com/", icon:"🌐" },
+    "System Design": { course:"Grokking System Design (Educative) or Alex Xu's book", link:"https://www.educative.io/courses/grokking-the-system-design-interview", icon:"🏗️" },
+    "Git":           { course:"Pro Git (free book) or GitHub Skills", link:"https://skills.github.com/", icon:"🔀" },
+    "Cloud":         { course:"AWS Cloud Practitioner Essentials (free)", link:"https://aws.amazon.com/training/learn-about/cloud-practitioner/", icon:"☁️" },
+    "Linux":         { course:"Linux Journey (free) or OverTheWire Bandit", link:"https://linuxjourney.com/", icon:"🐧" },
   };
 
   let selectedSkills = new Set();
@@ -738,36 +669,32 @@
     const raw = document.getElementById('studentScore').value;
     const val = parseFloat(raw);
     const hint = document.getElementById('scoreHintText');
-    if (raw === '' || isNaN(val)) { hint.textContent = 'Enter CGPA'; hint.style.color = ''; document.getElementById('scoreBarFill').style.width = '0%'; return; }
-    const clamped = Math.min(10, Math.max(0, val));
-    document.getElementById('scoreBarFill').style.width = (clamped / 10 * 100) + '%';
-    if (clamped >= 6.0) { hint.textContent = '✓ Above threshold (6.0+)'; hint.style.color = 'var(--green)'; }
-    else { hint.textContent = `${(6.0 - clamped).toFixed(2)} more to reach threshold`; hint.style.color = 'var(--amber)'; }
-    document.getElementById('scoreBarFill').style.background = clamped >= 6.0 ? 'var(--green-mid)' : clamped >= 4.0 ? 'var(--amber-mid)' : 'var(--red-mid)';
+    const fill = document.getElementById('scoreBarFill');
+    if (raw === '' || isNaN(val)) { hint.textContent = '—'; fill.style.width = '0%'; return; }
+    const c = Math.min(10, Math.max(0, val));
+    fill.style.width = (c / 10 * 100) + '%';
+    if (c >= 8) { hint.textContent = `${c.toFixed(2)} ✦ Excellent`; hint.style.color = 'var(--green)'; fill.style.background = 'var(--green)'; }
+    else if (c >= 6) { hint.textContent = `${c.toFixed(2)} ✓ Above threshold`; hint.style.color = 'var(--gold)'; fill.style.background = 'var(--gold)'; }
+    else { hint.textContent = `${c.toFixed(2)} — ${(6 - c).toFixed(2)} below 6.0`; hint.style.color = 'var(--red)'; fill.style.background = 'var(--red)'; }
   }
 
   function toggleSkill(el) {
-    const skill = el.dataset.skill;
-    if (selectedSkills.has(skill)) { selectedSkills.delete(skill); el.classList.remove('selected'); }
-    else { selectedSkills.add(skill); el.classList.add('selected'); }
+    const s = el.dataset.skill;
+    if (selectedSkills.has(s)) { selectedSkills.delete(s); el.classList.remove('selected'); }
+    else { selectedSkills.add(s); el.classList.add('selected'); }
   }
 
   function addCustomSkill() {
     const inp = document.getElementById('customSkill');
     const val = inp.value.trim();
     if (!val) return;
-    const normalised = val.charAt(0).toUpperCase() + val.slice(1);
-    if ([...document.querySelectorAll('#skillTagsContainer .tag')].some(t => t.dataset.skill === normalised)) {
-      inp.value = ''; return;
-    }
+    const n = val.charAt(0).toUpperCase() + val.slice(1);
+    if ([...document.querySelectorAll('#skillTagsContainer .tag')].some(t => t.dataset.skill === n)) { inp.value=''; return; }
     const tag = document.createElement('div');
-    tag.className = 'tag selected';
-    tag.dataset.skill = normalised;
-    tag.textContent = normalised;
-    tag.onclick = function() { toggleSkill(this); };
+    tag.className = 'tag selected'; tag.dataset.skill = n; tag.textContent = n;
+    tag.onclick = function(){ toggleSkill(this); };
     document.getElementById('skillTagsContainer').appendChild(tag);
-    selectedSkills.add(normalised);
-    inp.value = '';
+    selectedSkills.add(n); inp.value = '';
   }
 
   function selectCompany(el) {
@@ -785,47 +712,37 @@
   }
 
   function updateProgress() {
-    const labels = ['Student details', 'Select company', 'Skill check', 'Result'];
+    const labels = ['Your Profile','Target Company','Skill Check','AI Report'];
     for (let i = 0; i < 4; i++) {
       const circle = document.getElementById('pc' + i);
       const label  = document.getElementById('pl' + i);
-      circle.classList.remove('active', 'done');
-      label.classList.remove('active', 'done');
-      if (i < currentStep) {
-        circle.classList.add('done'); circle.textContent = '✓';
-        label.classList.add('done');
-      } else if (i === currentStep) {
-        circle.classList.add('active'); circle.textContent = i + 1;
-        label.classList.add('active');
-      } else {
-        circle.textContent = i + 1;
-      }
-      if (i < 3) {
-        const line = document.getElementById('pline' + i);
-        line.classList.toggle('done', i < currentStep);
-      }
+      circle.classList.remove('active','done');
+      label.classList.remove('active','done');
+      if (i < currentStep) { circle.classList.add('done'); circle.textContent = '✓'; label.classList.add('done'); }
+      else if (i === currentStep) { circle.classList.add('active'); circle.textContent = i+1; label.classList.add('active'); }
+      else { circle.textContent = i+1; }
+      if (i < 3) document.getElementById('pline'+i).classList.toggle('done', i < currentStep);
     }
   }
 
   function showError(id, msg) {
     const el = document.getElementById(id);
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 3500);
+    el.textContent = msg; el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3500);
   }
 
   function goToStep1() {
     const name = document.getElementById('studentName').value.trim();
-    const scoreRaw = document.getElementById('studentScore').value;
-    const score = parseFloat(scoreRaw);
-    if (!name) { showError('step0Error', 'Please enter your name.'); return; }
-    if (scoreRaw === '' || isNaN(score) || score < 0 || score > 10) { showError('step0Error', 'Please enter a valid CGPA between 0 and 10.'); return; }
-    if (selectedSkills.size === 0) { showError('step0Error', 'Please select at least one skill.'); return; }
+    const sr = document.getElementById('studentScore').value;
+    const s = parseFloat(sr);
+    if (!name) { showError('step0Error','Please enter your name.'); return; }
+    if (sr===''||isNaN(s)||s<0||s>10) { showError('step0Error','Please enter a valid CGPA (0–10).'); return; }
+    if (selectedSkills.size === 0) { showError('step0Error','Select at least one skill.'); return; }
     goToStep(1);
   }
 
   function goToStep2() {
-    if (!selectedCompany) { showError('step1Error', 'Please select a company to continue.'); return; }
+    if (!selectedCompany) { showError('step1Error','Please select a company.'); return; }
     buildComparison();
     goToStep(2);
   }
@@ -834,110 +751,227 @@
     const required = companies[selectedCompany].skills;
     const matched  = required.filter(s => selectedSkills.has(s));
     const missing  = required.filter(s => !selectedSkills.has(s));
-    const pct      = Math.round((matched.length / required.length) * 100);
-    const fillColor = pct >= 70 ? 'var(--green-mid)' : pct >= 40 ? 'var(--amber-mid)' : 'var(--red-mid)';
-    const pctColor  = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
+    const pct = Math.round((matched.length / required.length) * 100);
+    const fillColor = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
+    const pctColor  = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
 
-    let rows = '';
-    required.forEach(skill => {
+    let rows = required.map(skill => {
       const has = selectedSkills.has(skill);
-      rows += `<div class="skill-row">
+      return `<div class="skill-row">
         <span class="skill-name-col">${skill}</span>
-        <span class="pill ${has ? 'pill-green' : 'pill-red'}">
-          <span class="dot" style="background:${has ? 'var(--green-mid)' : 'var(--red-mid)'}"></span>
-          ${has ? 'You have this' : 'Missing'}
-        </span>
+        <span class="pill ${has ? 'pill-green' : 'pill-red'}">${has ? '✓ You have this' : '✗ Missing'}</span>
       </div>`;
-    });
+    }).join('');
 
     document.getElementById('comparisonContent').innerHTML = `
       <div class="match-header">
-        <span style="font-size:14px;color:var(--text2);">Match for <strong>${selectedCompany}</strong></span>
+        <span style="font-size:13px;color:var(--text3)">Match for <strong style="color:var(--text)">${selectedCompany}</strong></span>
         <span class="match-pct" style="color:${pctColor}">${pct}%</span>
       </div>
       <div class="match-meter"><div class="match-fill" id="matchFillBar" style="width:0%;background:${fillColor};"></div></div>
       <div class="match-sub">${matched.length} of ${required.length} required skills matched</div>
       <div class="skill-table">${rows}</div>
     `;
-    setTimeout(() => {
-      const bar = document.getElementById('matchFillBar');
-      if (bar) bar.style.width = pct + '%';
-    }, 80);
+    setTimeout(() => { const b = document.getElementById('matchFillBar'); if(b) b.style.width = pct + '%'; }, 80);
+
+    // Draw radar
+    drawRadar(required, matched);
+    document.getElementById('radarWrap').style.display = 'flex';
+  }
+
+  function drawRadar(required, matched) {
+    const canvas = document.getElementById('radarCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W/2, cy = H/2 - 10;
+    const R = Math.min(cx, cy) - 30;
+    const N = required.length;
+    if (N < 3) return;
+
+    const angle = i => (i / N) * 2 * Math.PI - Math.PI/2;
+    const pt = (i, r) => ({ x: cx + r * Math.cos(angle(i)), y: cy + r * Math.sin(angle(i)) });
+
+    // Grid rings
+    for (let ring = 1; ring <= 4; ring++) {
+      ctx.beginPath();
+      for (let i = 0; i < N; i++) { const p = pt(i, R * ring/4); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+    // Axes
+    for (let i = 0; i < N; i++) {
+      const p = pt(i, R);
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+    // Fill — required
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) { const p = pt(i, R); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(201,168,76,0.08)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(201,168,76,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Fill — matched
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const has = matched.includes(required[i]);
+      const p = pt(i, has ? R : R*0.08);
+      i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(74,222,128,0.18)'; ctx.fill();
+    ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Dots
+    for (let i = 0; i < N; i++) {
+      const has = matched.includes(required[i]);
+      const p = pt(i, has ? R : R*0.08);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 2*Math.PI);
+      ctx.fillStyle = has ? '#4ade80' : '#f87171'; ctx.fill();
+    }
+
+    // Labels
+    ctx.font = '11px DM Sans, sans-serif'; ctx.fillStyle = 'rgba(240,237,232,0.7)'; ctx.textAlign = 'center';
+    for (let i = 0; i < N; i++) {
+      const p = pt(i, R + 18);
+      ctx.fillText(required[i], p.x, p.y + 4);
+    }
   }
 
   function goToStep3() {
     buildResult();
     goToStep(3);
+    fetchAIAnalysis();
   }
 
   function buildResult() {
     const name     = document.getElementById('studentName').value.trim();
+    const branch   = document.getElementById('studentBranch').value.trim();
     const score    = parseFloat(document.getElementById('studentScore').value);
     const required = companies[selectedCompany].skills;
     const matched  = required.filter(s => selectedSkills.has(s));
     const missing  = required.filter(s => !selectedSkills.has(s));
     const pct      = Math.round((matched.length / required.length) * 100);
-    const ready    = pct >= 70 && score >= 6.0;
+    const ready    = pct >= 75 && score >= 6.0;
+    const co       = companies[selectedCompany];
+
+    // Readiness score (weighted)
+    const readinessScore = Math.round(pct * 0.6 + (Math.min(score,10)/10)*100 * 0.4);
 
     let suggestHTML = '';
     if (missing.length > 0) {
-      const items = missing.map(skill => {
-        const course = courses[skill] || 'Search for beginner tutorials on YouTube or Coursera';
-        return `<div class="suggest-item">
-          <div class="suggest-icon">
-            <svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14"/></svg>
-          </div>
-          <div>
-            <div class="suggest-skill">${skill}</div>
-            <div class="suggest-course">${course}</div>
+      const weeks = ['Wk 1–2','Wk 3–4','Wk 5–6','Wk 7–8'];
+      const items = missing.map((skill, idx) => {
+        const c = courseMap[skill] || { course:'Search on YouTube or Coursera', link:'https://coursera.org', icon:'📚' };
+        return `<div class="roadmap-item">
+          <div class="roadmap-week">${weeks[idx] || 'Later'}</div>
+          <div class="roadmap-content">
+            <div class="roadmap-skill">${c.icon} ${skill}</div>
+            <div class="roadmap-course">${c.course}</div>
+            <a class="roadmap-link" href="${c.link}" target="_blank" rel="noopener">Start learning →</a>
           </div>
         </div>`;
       }).join('');
-      suggestHTML = `<div class="section-label">Suggested learning resources</div><div>${items}</div>`;
+      suggestHTML = `<div class="section-label">📅 Personalised study roadmap</div><div class="roadmap">${items}</div>`;
     } else {
-      suggestHTML = `<div class="all-good">You have all required skills for ${selectedCompany}! Keep practising to ace the interview.</div>`;
+      suggestHTML = `<div class="all-good">🎉 You have all required skills for ${selectedCompany}! Focus on mock interviews and system design practice.</div>`;
     }
 
     let alertHTML = '';
-    if (!ready && pct >= 70 && score < 6.0) {
-      alertHTML = `<div class="alert-box alert-amber">Your skills look great (${pct}% match), but your CGPA (${score.toFixed(2)}/10) is below the 6.0 threshold. Focus on your academics and coursework to improve your CGPA.</div>`;
-    } else if (!ready && pct < 70 && score >= 6.0) {
-      alertHTML = `<div class="alert-box alert-amber">Your CGPA is solid (${score.toFixed(2)}/10), but your skill match is only ${pct}%. Work through the missing skills listed below to improve your chances.</div>`;
+    if (!ready && pct >= 75 && score < 6.0) {
+      alertHTML = `<div class="alert-box alert-amber">⚠️ Strong skill match (${pct}%) but CGPA ${score.toFixed(2)} is below the 6.0 cutoff. Many companies screen on CGPA first.</div>`;
+    } else if (!ready && pct < 75 && score >= 6.0) {
+      alertHTML = `<div class="alert-box alert-amber">⚠️ Good CGPA (${score.toFixed(2)}) but skill match is only ${pct}%. Work through the roadmap below to close the gap.</div>`;
     }
 
     document.getElementById('resultContent').innerHTML = `
       <div class="result-hero">
         <div class="result-icon">${ready ? '🎯' : '📚'}</div>
-        <div class="result-name">${name} — <em>${selectedCompany}</em></div>
+        <div class="result-name">${name}${branch ? ` · ${branch}` : ''} — <em>${selectedCompany}</em></div>
         <div class="result-status-badge ${ready ? 'badge-ready' : 'badge-notready'}">
-          ${ready ? '✓ Ready for placement' : '✗ Not yet ready'}
+          ${ready ? '✓ PLACEMENT READY' : '✗ GAP ACTION NEEDED'}
         </div>
       </div>
+
       <div class="stat-grid">
         <div class="stat-card">
-          <div class="stat-val" style="color:${pct >= 70 ? 'var(--green)' : 'var(--red)'};">${pct}%</div>
+          <div class="stat-val" style="color:${pct>=75?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}">${pct}%</div>
           <div class="stat-lbl">Skill match</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val" style="color:${score >= 6.0 ? 'var(--green)' : 'var(--red)'};">${score.toFixed(2)}<span style="font-size:14px;font-weight:400;">/10</span></div>
+          <div class="stat-val" style="color:${score>=6?'var(--green)':'var(--red)'}">${score.toFixed(1)}<span style="font-size:13px;font-weight:400">/10</span></div>
           <div class="stat-lbl">CGPA</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:var(--gold)">${readinessScore}</div>
+          <div class="stat-lbl">Readiness score</div>
+        </div>
       </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:0.5rem;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;">💰 ${co.salary}</div>
+        <div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;">💼 ${co.roles}</div>
+      </div>
+
       ${alertHTML}
       ${suggestHTML}
     `;
   }
 
+  async function fetchAIAnalysis() {
+    const name     = document.getElementById('studentName').value.trim();
+    const branch   = document.getElementById('studentBranch').value.trim();
+    const score    = parseFloat(document.getElementById('studentScore').value);
+    const required = companies[selectedCompany].skills;
+    const matched  = required.filter(s => selectedSkills.has(s));
+    const missing  = required.filter(s => !selectedSkills.has(s));
+    const pct      = Math.round((matched.length / required.length) * 100);
+    const allSkills = [...selectedSkills].join(', ');
+
+    const prompt = `You are a campus placement expert. Analyse this student's profile concisely (3–4 sentences, no bullet points):
+
+Student: ${name}${branch ? `, ${branch}` : ''}
+CGPA: ${score}/10
+Skills: ${allSkills}
+Target Company: ${selectedCompany}
+Required Skills: ${required.join(', ')}
+Matched: ${matched.join(', ') || 'None'}
+Missing: ${missing.join(', ') || 'None'}
+Skill Match: ${pct}%
+
+Give specific, actionable advice on: (1) overall readiness, (2) the biggest gap to fix first and how, (3) one thing that would most boost chances. Be encouraging but honest. Keep it under 100 words.`;
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || '').join('') || '';
+      document.getElementById('aiText').textContent = text || 'Analysis unavailable.';
+    } catch(e) {
+      document.getElementById('aiText').textContent = `Based on your profile, focus on closing the skill gaps identified above. Prioritise DSA and core CS fundamentals as they are tested by most companies. Mock interviews and consistent practice will significantly improve your placement readiness.`;
+    }
+  }
+
   function restart() {
-    selectedSkills = new Set();
-    selectedCompany = null;
+    selectedSkills = new Set(); selectedCompany = null;
     document.getElementById('studentName').value = '';
+    document.getElementById('studentBranch').value = '';
     document.getElementById('studentScore').value = '';
     document.getElementById('scoreBarFill').style.width = '0%';
-    document.getElementById('scoreHintText').textContent = 'Enter CGPA';
+    document.getElementById('scoreHintText').textContent = '—';
     document.getElementById('scoreHintText').style.color = '';
     document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
     document.querySelectorAll('.company-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('aiText').innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div> Generating your personalised analysis…</div>';
     goToStep(0);
   }
 </script>
