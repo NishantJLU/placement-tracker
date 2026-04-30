@@ -1,8 +1,17 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="PlaceReady — AI-powered campus placement readiness tracker. Check your skill gaps, get a personalised study roadmap, and prepare for your dream company."/>
+  <meta property="og:title" content="PlaceReady — Campus Placement Intelligence"/>
+  <meta property="og:description" content="Check if you're ready for campus placements. Get AI-powered gap analysis and a personalised study roadmap."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://nishantjlu.github.io/placement-tracker/og-image.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="theme-color" content="#0071e3"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230071e3'/><text x='16' y='23' text-anchor='middle' font-size='20' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>"/>
   <title>PlaceReady — Campus Placement Intelligence</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -32,6 +41,27 @@
       --radius: 14px;
       --radius-lg: 20px;
       --glow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0d0d0f;
+      --bg2: #1a1a1e;
+      --surface: #1a1a1e;
+      --surface2: #252529;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.15);
+      --text: #f5f5f7;
+      --text2: #a1a1a6;
+      --text3: #6e6e73;
+      --gold-light: rgba(0,113,227,0.12);
+      --gold-dim: rgba(0,113,227,0.3);
+      --green-bg: rgba(45,200,99,0.1);
+      --red-bg: rgba(255,69,58,0.1);
+      --amber-bg: rgba(255,189,46,0.1);
+      --blue-bg: rgba(0,113,227,0.1);
+      --glow: 0 4px 24px rgba(0,0,0,0.3);
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
     }
 
     body {
@@ -44,9 +74,9 @@
       align-items: center;
       padding: 0 1rem 5rem;
       overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
     }
 
-    /* Subtle radial highlight */
     body::before {
       content: '';
       position: fixed;
@@ -56,14 +86,21 @@
       z-index: 0;
     }
 
-    /* HEADER */
     header {
       width: 100%;
       max-width: 700px;
-      padding: 3.5rem 0 2.5rem;
+      padding: 3rem 0 2rem;
       text-align: center;
       position: relative;
       z-index: 1;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .logo-badge {
@@ -79,12 +116,23 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 18px;
     }
 
     .logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2s infinite; }
 
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .dark-toggle {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .dark-toggle:hover { border-color: var(--gold-dim); }
 
     header h1 {
       font-family: 'Fraunces', serif;
@@ -107,7 +155,6 @@
       line-height: 1.6;
     }
 
-    /* PROGRESS */
     .progress-wrap {
       width: 100%;
       max-width: 700px;
@@ -141,17 +188,15 @@
     .prog-line { flex: 1; height: 1px; background: var(--border); transition: background 0.4s; }
     .prog-line.done { background: var(--green); }
 
-    /* CONTAINER */
     .container { width: 100%; max-width: 700px; position: relative; z-index: 1; }
 
-    /* CARD */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 2rem;
       display: none;
-      box-shadow: var(--glow), 0 1px 0 rgba(255,255,255,0.9) inset;
+      box-shadow: var(--glow), 0 1px 0 rgba(255,255,255,0.03) inset;
       animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
     }
     .card.active { display: block; }
@@ -166,7 +211,6 @@
     }
     .card-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
 
-    /* FORM */
     label {
       display: block; font-size: 12px; font-weight: 600;
       color: var(--text2); margin-bottom: 6px; margin-top: 20px;
@@ -184,29 +228,46 @@
       outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     }
     input::placeholder { color: var(--text3); }
-    input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(0,113,227,0.12); }
 
-    /* SKILL TAGS */
     .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+
     .tag {
       background: var(--bg2); border: 1px solid var(--border2);
       border-radius: 20px; padding: 5px 13px;
       font-size: 12px; color: var(--text2);
       cursor: pointer; transition: all 0.15s; user-select: none;
+      position: relative;
     }
     .tag:hover { border-color: var(--gold-dim); color: var(--text); }
     .tag.selected { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+    .tag .level-dots { display: none; gap: 3px; margin-left: 6px; align-items: center; }
+    .tag.selected .level-dots { display: inline-flex; }
+    .tag .level-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.3; }
+    .tag[data-level="1"] .level-dot:nth-child(-n+1) { opacity: 1; }
+    .tag[data-level="2"] .level-dot:nth-child(-n+2) { opacity: 1; }
+    .tag[data-level="3"] .level-dot { opacity: 1; }
 
     .add-skill-row { display: flex; gap: 8px; margin-top: 10px; }
     .add-skill-row input { flex: 1; }
 
-    /* SCORE BAR */
+    .proficiency-hint { font-size: 11px; color: var(--text3); margin-top: 6px; font-family: 'DM Mono', monospace; }
+
     .score-hint { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     .score-bar { flex: 1; height: 5px; background: var(--border2); border-radius: 3px; overflow: hidden; }
     .score-bar-fill { height: 100%; border-radius: 3px; background: var(--blue); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
     .score-hint-text { font-size: 12px; color: var(--text3); white-space: nowrap; font-family: 'DM Mono', monospace; }
 
-    /* COMPANY GRID */
+    .search-bar {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .search-bar input { padding-left: 36px; }
+    .search-bar svg {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; stroke: var(--text3); fill: none; stroke-width: 2; pointer-events: none;
+    }
+
     .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     @media(max-width:500px){ .company-grid { grid-template-columns: repeat(2, 1fr); } }
 
@@ -218,10 +279,6 @@
       background: var(--bg2);
       position: relative; overflow: hidden;
     }
-    .company-card::before {
-      content: ''; position: absolute; inset: 0;
-      opacity: 0; transition: opacity 0.2s;
-    }
     .company-card:hover { border-color: var(--border2); transform: translateY(-1px); }
     .company-card.selected { border: 1.5px solid var(--blue); background: var(--blue-bg); }
     .company-card.selected .co-name { color: var(--blue); }
@@ -230,14 +287,40 @@
       width: 38px; height: 38px; border-radius: 10px;
       margin: 0 auto 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700;
-      font-family: 'DM Mono', monospace;
+      font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace;
     }
     .co-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
     .co-skills { font-size: 10px; color: var(--text3); line-height: 1.6; }
     .co-salary { font-size: 10px; color: var(--blue); margin-top: 4px; font-family: 'DM Mono', monospace; }
 
-    /* MATCH METER */
+    .compare-strip {
+      display: flex; gap: 8px; align-items: center;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .compare-strip label { margin: 0; text-transform: none; font-size: 12px; color: var(--text2); }
+    .compare-toggle {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text2); cursor: pointer;
+      padding: 4px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      transition: all 0.15s;
+    }
+    .compare-toggle:hover { border-color: var(--blue); color: var(--blue); }
+    .compare-toggle input { accent-color: var(--blue); }
+
+    .compare-table-wrap {
+      overflow-x: auto; margin-top: 1rem;
+      border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .compare-table th, .compare-table td { padding: 10px 12px; text-align: center; border-bottom: 1px solid var(--border); }
+    .compare-table th {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.06em; background: var(--bg2); position: sticky; top: 0;
+    }
+    .compare-table td:first-child { text-align: left; font-weight: 500; color: var(--text); }
+    .compare-table tr:last-child td { border-bottom: none; }
+
     .match-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
     .match-pct { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; }
     .match-meter { height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
@@ -247,8 +330,7 @@
     .skill-table { width: 100%; }
     .skill-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 0; border-bottom: 1px solid var(--border);
-      font-size: 13px;
+      padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
     }
     .skill-row:last-child { border-bottom: none; }
     .skill-name-col { font-weight: 500; }
@@ -261,7 +343,6 @@
     .pill-green { background: var(--green-bg); color: var(--green); }
     .pill-red { background: var(--red-bg); color: var(--red); }
 
-    /* RADAR CHART */
     .radar-wrap {
       display: flex; flex-direction: column; align-items: center;
       margin: 1.5rem 0; padding: 1rem;
@@ -271,7 +352,6 @@
     .radar-title { font-size: 11px; color: var(--text3); margin-bottom: 1rem; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
     #radarCanvas { max-width: 280px; width: 100%; }
 
-    /* RESULT */
     .result-hero {
       text-align: center; padding: 2rem 0 1.5rem;
       border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
@@ -303,39 +383,41 @@
       font-family: 'DM Mono', monospace;
     }
 
-    /* ROADMAP TIMELINE */
-    .roadmap { margin-top: 0.5rem; }
-    .roadmap-item {
-      display: flex; gap: 14px; padding: 12px 0;
-      border-bottom: 1px solid var(--border);
+    .rounds-pipeline {
+      display: flex; gap: 0; align-items: center;
+      margin: 1rem 0; overflow-x: auto; padding-bottom: 4px;
     }
+    .round-node { display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+    .round-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 12px;
+      font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap;
+    }
+    .round-arrow { font-size: 14px; color: var(--text3); padding: 0 6px; }
+
+    .roadmap { margin-top: 0.5rem; }
+    .roadmap-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .roadmap-item:last-child { border-bottom: none; }
     .roadmap-week {
       font-family: 'DM Mono', monospace; font-size: 10px;
-      color: var(--blue); font-weight: 500; width: 48px; flex-shrink: 0;
-      padding-top: 2px;
+      color: var(--blue); font-weight: 500; width: 48px; flex-shrink: 0; padding-top: 2px;
     }
     .roadmap-content { flex: 1; }
     .roadmap-skill { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
     .roadmap-course { font-size: 12px; color: var(--text2); line-height: 1.5; }
     .roadmap-link {
       display: inline-block; margin-top: 4px;
-      font-size: 11px; color: var(--blue);
-      text-decoration: none; font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--blue); text-decoration: none; font-family: 'DM Mono', monospace;
     }
     .roadmap-link:hover { text-decoration: underline; }
 
-    /* AI ANALYSIS BOX */
     .ai-box {
       background: linear-gradient(135deg, rgba(0,113,227,0.04), rgba(0,113,227,0.02));
       border: 1px solid rgba(0,113,227,0.2);
-      border-radius: var(--radius);
-      padding: 16px 18px; margin-top: 1.25rem;
+      border-radius: var(--radius); padding: 16px 18px; margin-top: 1.25rem;
     }
-    .ai-box-header {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 10px;
-    }
+    [data-theme="dark"] .ai-box { background: linear-gradient(135deg, rgba(0,113,227,0.08), rgba(0,113,227,0.04)); }
+    .ai-box-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
     .ai-badge {
       background: var(--blue-bg); border: 1px solid rgba(0,113,227,0.25);
       border-radius: 4px; padding: 2px 7px;
@@ -344,10 +426,7 @@
     }
     .ai-box-header span { font-size: 13px; font-weight: 600; color: var(--text); }
     .ai-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
-    .ai-loading {
-      display: flex; align-items: center; gap: 8px;
-      color: var(--text3); font-size: 13px;
-    }
+    .ai-loading { display: flex; align-items: center; gap: 8px; color: var(--text3); font-size: 13px; }
     .ai-spinner {
       width: 14px; height: 14px; border-radius: 50%;
       border: 2px solid var(--border2); border-top-color: var(--blue);
@@ -355,23 +434,15 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .alert-box {
-      padding: 12px 16px; border-radius: var(--radius);
-      font-size: 13px; margin-top: 1rem; line-height: 1.6;
-    }
+    .alert-box { padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-top: 1rem; line-height: 1.6; }
     .alert-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
 
-    /* SUGGEST ITEMS */
-    .suggest-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-    }
+    .suggest-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .suggest-item:last-child { border-bottom: none; }
     .suggest-icon {
       width: 32px; height: 32px; border-radius: 8px;
       background: var(--blue-bg); border: 1px solid rgba(0,113,227,0.2);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px;
     }
     .suggest-skill { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
     .suggest-course { font-size: 12px; color: var(--text2); line-height: 1.5; }
@@ -383,133 +454,142 @@
       margin-top: 1rem; border: 1px solid rgba(74,222,128,0.2);
     }
 
-    /* BUTTONS */
     .btn {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 10px 20px; border: 1px solid var(--border2);
       border-radius: var(--radius); background: var(--surface2);
       color: var(--text2); font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      transition: all 0.15s;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
     }
     .btn:hover { border-color: var(--text3); color: var(--text); }
     .btn:active { transform: scale(0.98); }
-
-    .btn.primary {
-      background: var(--blue); color: #fff;
-      border-color: var(--blue); font-weight: 700;
-    }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 700; }
     .btn.primary:hover { background: #0077ed; box-shadow: 0 2px 12px rgba(0,113,227,0.25); }
     .btn.sm { padding: 8px 14px; font-size: 12px; }
 
-    .btn-row { display: flex; gap: 10px; margin-top: 1.75rem; align-items: center; }
+    .btn-row { display: flex; gap: 10px; margin-top: 1.75rem; align-items: center; flex-wrap: wrap; }
     .btn-row.centered { justify-content: center; }
-    .btn-row.spread { justify-content: space-between; }
 
     .error-msg { font-size: 12px; color: var(--red); margin-top: 8px; display: none; font-family: 'DM Mono', monospace; }
 
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
 
-    /* SHARE STRIP */
     .share-strip {
       display: flex; gap: 8px; align-items: center;
       padding: 12px 16px; background: var(--bg2);
       border-radius: var(--radius); border: 1px solid var(--border);
-      margin-top: 1.25rem;
+      margin-top: 1.25rem; flex-wrap: wrap;
     }
-    .share-strip span { font-size: 12px; color: var(--text3); flex: 1; font-family: 'DM Mono', monospace; }
+    .share-strip span { font-size: 12px; color: var(--text3); flex: 1; font-family: 'DM Mono', monospace; min-width: 120px; }
     .share-btn {
       padding: 6px 14px; border-radius: 8px; font-size: 12px;
       font-weight: 600; cursor: pointer; border: 1px solid var(--border2);
       background: var(--surface2); color: var(--text2); transition: all 0.15s;
     }
     .share-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .share-btn.copied { border-color: var(--green); color: var(--green); }
 
-    /* PRINT */
+    .saved-notice {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 30px; padding: 8px 18px;
+      font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 100; pointer-events: none;
+    }
+    .saved-notice.show { transform: translateX(-50%) translateY(0); }
+
     @media print {
       body { background: white; color: black; }
-      .card { border: 1px solid #ccc; box-shadow: none; display: block !important; }
-      .btn-row, .progress-wrap, header { display: none !important; }
+      .card { border: 1px solid #ccc; box-shadow: none; }
+      .btn-row, .progress-wrap, header, .dark-toggle, .compare-strip, .share-strip, .saved-notice { display: none !important; }
+      .card.active { display: block !important; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-badge"><div class="logo-dot"></div> PlaceReady Intelligence</div>
+  <div class="header-top">
+    <div class="logo-badge"><div class="logo-dot"></div> PlaceReady Intelligence</div>
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" aria-label="Toggle dark mode">🌙</button>
+  </div>
   <h1>Campus Placement<br><em>Readiness Tracker</em></h1>
   <p>AI-powered gap analysis to help you land your dream company</p>
 </header>
 
-<div class="progress-wrap" id="progressWrap">
-  <div class="prog-step">
-    <div class="prog-circle active" id="pc0">1</div>
-    <div class="prog-label active" id="pl0">Your Profile</div>
-  </div>
-  <div class="prog-line" id="pline0"></div>
-  <div class="prog-step">
-    <div class="prog-circle" id="pc1">2</div>
-    <div class="prog-label" id="pl1">Target Company</div>
-  </div>
-  <div class="prog-line" id="pline1"></div>
-  <div class="prog-step">
-    <div class="prog-circle" id="pc2">3</div>
-    <div class="prog-label" id="pl2">Skill Check</div>
-  </div>
-  <div class="prog-line" id="pline2"></div>
-  <div class="prog-step">
-    <div class="prog-circle" id="pc3">4</div>
-    <div class="prog-label" id="pl3">AI Report</div>
-  </div>
-</div>
+<main class="container">
 
-<div class="container">
+  <div class="progress-wrap" id="progressWrap" role="navigation" aria-label="Steps">
+    <div class="prog-step">
+      <div class="prog-circle active" id="pc0" aria-current="step">1</div>
+      <div class="prog-label active" id="pl0">Your Profile</div>
+    </div>
+    <div class="prog-line" id="pline0"></div>
+    <div class="prog-step">
+      <div class="prog-circle" id="pc1">2</div>
+      <div class="prog-label" id="pl1">Target Company</div>
+    </div>
+    <div class="prog-line" id="pline1"></div>
+    <div class="prog-step">
+      <div class="prog-circle" id="pc2">3</div>
+      <div class="prog-label" id="pl2">Skill Check</div>
+    </div>
+    <div class="prog-line" id="pline2"></div>
+    <div class="prog-step">
+      <div class="prog-circle" id="pc3">4</div>
+      <div class="prog-label" id="pl3">AI Report</div>
+    </div>
+  </div>
 
   <!-- Step 0: Profile -->
   <div class="card active" id="step0">
     <div class="card-badge">Step 1 of 4</div>
     <div class="card-title" style="margin-bottom:1.5rem">Your details</div>
 
-    <label>Full Name</label>
+    <label for="studentName">Full Name</label>
     <input type="text" id="studentName" placeholder="e.g. Priya Sharma" autocomplete="name"/>
 
-    <label>Branch / Degree</label>
+    <label for="studentBranch">Branch / Degree</label>
     <input type="text" id="studentBranch" placeholder="e.g. B.Tech CSE, 3rd year"/>
 
-    <label>CGPA <span style="font-weight:400;color:var(--text3)">(out of 10)</span></label>
+    <label for="studentScore">CGPA <span style="font-weight:400;color:var(--text3)">(out of 10)</span></label>
     <input type="number" id="studentScore" min="0" max="10" step="0.01" placeholder="e.g. 7.8" oninput="updateScoreBar()"/>
     <div class="score-hint">
       <div class="score-bar"><div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div></div>
       <div class="score-hint-text" id="scoreHintText">Enter CGPA</div>
     </div>
 
-    <label>Your Skills <span style="font-weight:400;color:var(--text3)">— select all that apply</span></label>
+    <label>Your Skills <span style="font-weight:400;color:var(--text3)">— select + set level</span></label>
     <div class="skill-tags" id="skillTagsContainer">
-      <div class="tag" data-skill="Python" onclick="toggleSkill(this)">Python</div>
-      <div class="tag" data-skill="Java" onclick="toggleSkill(this)">Java</div>
-      <div class="tag" data-skill="DSA" onclick="toggleSkill(this)">DSA</div>
-      <div class="tag" data-skill="SQL" onclick="toggleSkill(this)">SQL</div>
-      <div class="tag" data-skill="DBMS" onclick="toggleSkill(this)">DBMS</div>
-      <div class="tag" data-skill="OOP" onclick="toggleSkill(this)">OOP</div>
-      <div class="tag" data-skill="Aptitude" onclick="toggleSkill(this)">Aptitude</div>
-      <div class="tag" data-skill="Communication" onclick="toggleSkill(this)">Communication</div>
-      <div class="tag" data-skill="C++" onclick="toggleSkill(this)">C++</div>
-      <div class="tag" data-skill="Machine Learning" onclick="toggleSkill(this)">Machine Learning</div>
-      <div class="tag" data-skill="React" onclick="toggleSkill(this)">React</div>
-      <div class="tag" data-skill="Node.js" onclick="toggleSkill(this)">Node.js</div>
-      <div class="tag" data-skill="OS" onclick="toggleSkill(this)">OS</div>
-      <div class="tag" data-skill="Networking" onclick="toggleSkill(this)">Networking</div>
-      <div class="tag" data-skill="System Design" onclick="toggleSkill(this)">System Design</div>
-      <div class="tag" data-skill="Git" onclick="toggleSkill(this)">Git</div>
-      <div class="tag" data-skill="Cloud" onclick="toggleSkill(this)">Cloud</div>
-      <div class="tag" data-skill="Linux" onclick="toggleSkill(this)">Linux</div>
+      <div class="tag" data-skill="Python" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Python<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Java" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Java<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="DSA" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">DSA<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="SQL" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">SQL<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="DBMS" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">DBMS<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="OOP" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">OOP<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Aptitude" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Aptitude<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Communication" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Communication<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="C++" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">C++<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Machine Learning" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Machine Learning<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="React" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">React<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Node.js" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Node.js<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="OS" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">OS<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Networking" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Networking<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="System Design" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">System Design<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Git" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Git<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Cloud" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Cloud<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
+      <div class="tag" data-skill="Linux" onclick="cycleLevel(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();cycleLevel(this)}">Linux<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span></div>
     </div>
+    <div class="proficiency-hint">Click once to select · Click again to cycle: Beginner → Intermediate → Advanced</div>
     <div class="add-skill-row">
       <input type="text" id="customSkill" placeholder="Add a skill..." onkeydown="if(event.key==='Enter')addCustomSkill()"/>
       <button class="btn sm" onclick="addCustomSkill()">+ Add</button>
     </div>
 
-    <div id="step0Error" class="error-msg"></div>
+    <div id="step0Error" class="error-msg" role="alert"></div>
     <div class="btn-row">
       <button class="btn primary" onclick="goToStep1()">Choose company →</button>
     </div>
@@ -520,56 +600,68 @@
     <div class="card-badge">Step 2 of 4</div>
     <div class="card-title" style="margin-bottom:1.5rem">Select target company</div>
 
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="companySearch" placeholder="Search companies..." oninput="filterCompanies()"/>
+    </div>
+
+    <div class="compare-strip">
+      <label class="compare-toggle">
+        <input type="checkbox" id="compareMode" onchange="toggleCompareMode()"/>
+        Compare multiple companies
+      </label>
+    </div>
+
     <div class="company-grid" id="companyGrid">
-      <div class="company-card" data-company="Google" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Google" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a2744;color:#4285F4;">G</div>
         <div class="co-name">Google</div>
         <div class="co-skills">Python · DSA · SQL · System Design</div>
         <div class="co-salary">₹12–45 LPA</div>
       </div>
-      <div class="company-card" data-company="Microsoft" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Microsoft" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a2035;color:#00A4EF;">M</div>
         <div class="co-name">Microsoft</div>
         <div class="co-skills">DSA · OOP · OS · System Design</div>
         <div class="co-salary">₹10–40 LPA</div>
       </div>
-      <div class="company-card" data-company="Amazon" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Amazon" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1f1a10;color:#FF9900;">A</div>
         <div class="co-name">Amazon</div>
         <div class="co-skills">DSA · Python · OOP · SQL</div>
         <div class="co-salary">₹10–35 LPA</div>
       </div>
-      <div class="company-card" data-company="Infosys" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Infosys" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a1f1a;color:#007CC2;">I</div>
         <div class="co-name">Infosys</div>
         <div class="co-skills">Python · DBMS · OOP · Communication</div>
         <div class="co-salary">₹3.6–8 LPA</div>
       </div>
-      <div class="company-card" data-company="TCS" onclick="selectCompany(this)">
+      <div class="company-card" data-company="TCS" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a2020;color:#0089CF;">T</div>
         <div class="co-name">TCS</div>
         <div class="co-skills">Java · Aptitude · Communication · SQL</div>
         <div class="co-salary">₹3.5–7 LPA</div>
       </div>
-      <div class="company-card" data-company="Wipro" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Wipro" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1e1a25;color:#9B4F97;">W</div>
         <div class="co-name">Wipro</div>
         <div class="co-skills">Java · SQL · Communication · OOP</div>
         <div class="co-salary">₹3.5–6.5 LPA</div>
       </div>
-      <div class="company-card" data-company="Accenture" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Accenture" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1f1a20;color:#A100FF;">Ac</div>
         <div class="co-name">Accenture</div>
         <div class="co-skills">C++ · DBMS · Aptitude · Python</div>
         <div class="co-salary">₹4.5–9 LPA</div>
       </div>
-      <div class="company-card" data-company="Cognizant" onclick="selectCompany(this)">
+      <div class="company-card" data-company="Cognizant" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a1d25;color:#0033A0;">C</div>
         <div class="co-name">Cognizant</div>
         <div class="co-skills">Java · SQL · Aptitude · OOP</div>
         <div class="co-salary">₹4–7.5 LPA</div>
       </div>
-      <div class="company-card" data-company="HCL" onclick="selectCompany(this)">
+      <div class="company-card" data-company="HCL" onclick="selectCompany(this)" role="button" tabindex="0" aria-pressed="false" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectCompany(this)}">
         <div class="co-logo" style="background:#1a201a;color:#0076BE;">H</div>
         <div class="co-name">HCL</div>
         <div class="co-skills">C++ · Networking · OOP · Linux</div>
@@ -577,7 +669,7 @@
       </div>
     </div>
 
-    <div id="step1Error" class="error-msg"></div>
+    <div id="step1Error" class="error-msg" role="alert"></div>
     <div class="btn-row">
       <button class="btn" onclick="goToStep(0)">← Back</button>
       <button class="btn primary" onclick="goToStep2()">Compare skills →</button>
@@ -589,7 +681,7 @@
     <div class="card-badge">Step 3 of 4</div>
     <div class="card-title" style="margin-bottom:1.5rem">Skill comparison</div>
     <div id="comparisonContent"></div>
-    <!-- Radar -->
+    <div id="compareTableWrap" style="display:none"></div>
     <div class="radar-wrap" id="radarWrap" style="display:none">
       <div class="radar-title">Skill coverage radar</div>
       <canvas id="radarCanvas" width="280" height="240"></canvas>
@@ -606,7 +698,6 @@
     <div class="card-title" style="margin-bottom:1.5rem">Placement readiness report</div>
     <div id="resultContent"></div>
 
-    <!-- AI box -->
     <div class="ai-box" id="aiBox">
       <div class="ai-box-header">
         <div class="ai-badge">AI</div>
@@ -622,21 +713,38 @@
       <button class="btn" onclick="restart()">↺ Start over</button>
       <button class="btn primary" onclick="window.print()">⬇ Print report</button>
     </div>
+
+    <div class="share-strip" id="shareStrip">
+      <span>Share this result</span>
+      <button class="share-btn" onclick="copyShareLink()">Copy link</button>
+      <button class="share-btn" onclick="downloadReport()">Download report</button>
+    </div>
   </div>
 
-</div>
+</main>
+
+<div class="saved-notice" id="savedNotice">Progress saved</div>
 
 <script>
   const companies = {
-    "Google":     { skills: ["Python","DSA","SQL","System Design"],          salary:"₹12–45 LPA", roles:"SWE, SRE, Data Analyst" },
-    "Microsoft":  { skills: ["DSA","OOP","OS","System Design"],              salary:"₹10–40 LPA", roles:"SWE, PM, Data Engineer" },
-    "Amazon":     { skills: ["DSA","Python","OOP","SQL"],                    salary:"₹10–35 LPA", roles:"SDE, Cloud Ops, QA" },
-    "Infosys":    { skills: ["Python","DBMS","OOP","Communication"],         salary:"₹3.6–8 LPA",  roles:"Systems Engineer, Analyst" },
-    "TCS":        { skills: ["Java","Aptitude","Communication","SQL"],       salary:"₹3.5–7 LPA",  roles:"Software Developer, QA" },
-    "Wipro":      { skills: ["Java","SQL","Communication","OOP"],            salary:"₹3.5–6.5 LPA",roles:"Project Engineer" },
-    "Accenture":  { skills: ["C++","DBMS","Aptitude","Python"],              salary:"₹4.5–9 LPA",  roles:"Associate SE, Analyst" },
-    "Cognizant":  { skills: ["Java","SQL","Aptitude","OOP"],                 salary:"₹4–7.5 LPA",  roles:"Programmer Analyst" },
-    "HCL":        { skills: ["C++","Networking","OOP","Linux"],              salary:"₹3.5–6 LPA",  roles:"Graduate Engineer Trainee" },
+    "Google":     { skills: ["Python","DSA","SQL","System Design"],          salary:"₹12–45 LPA", roles:"SWE, SRE, Data Analyst",
+      rounds:["Online Assessment","DSA Round 1","DSA Round 2","System Design","HR"] },
+    "Microsoft":  { skills: ["DSA","OOP","OS","System Design"],              salary:"₹10–40 LPA", roles:"SWE, PM, Data Engineer",
+      rounds:["Online Assessment","Coding Round","Machine Coding","System Design","HR"] },
+    "Amazon":     { skills: ["DSA","Python","OOP","SQL"],                    salary:"₹10–35 LPA", roles:"SDE, Cloud Ops, QA",
+      rounds:["Online Assessment","DSA Round 1","DSA Round 2","Bar Raiser","HR"] },
+    "Infosys":    { skills: ["Python","DBMS","OOP","Communication"],         salary:"₹3.6–8 LPA",  roles:"Systems Engineer, Analyst",
+      rounds:["Aptitude Test","Technical MCQ","Technical Interview","HR"] },
+    "TCS":        { skills: ["Java","Aptitude","Communication","SQL"],       salary:"₹3.5–7 LPA",  roles:"Software Developer, QA",
+      rounds:["Aptitude Test","Coding Test","Technical Interview","Managerial Round"] },
+    "Wipro":      { skills: ["Java","SQL","Communication","OOP"],            salary:"₹3.5–6.5 LPA",roles:"Project Engineer",
+      rounds:["Online Assessment","Technical Interview","Project Discussion","HR"] },
+    "Accenture":  { skills: ["C++","DBMS","Aptitude","Python"],              salary:"₹4.5–9 LPA",  roles:"Associate SE, Analyst",
+      rounds:["Aptitude Round","Technical Interview","Communication Assessment","HR"] },
+    "Cognizant":  { skills: ["Java","SQL","Aptitude","OOP"],                 salary:"₹4–7.5 LPA",  roles:"Programmer Analyst",
+      rounds:["Aptitude Test","Technical MCQ","Technical Interview","HR"] },
+    "HCL":        { skills: ["C++","Networking","OOP","Linux"],              salary:"₹3.5–6 LPA",  roles:"Graduate Engineer Trainee",
+      rounds:["Written Test","Technical Interview","Domain Round","HR"] },
   };
 
   const courseMap = {
@@ -661,8 +769,58 @@
   };
 
   let selectedSkills = new Set();
+  let skillLevels = {};
   let selectedCompany = null;
+  let compareCompanies = [];
+  let compareMode = false;
   let currentStep = 0;
+  let saveTimeout;
+
+  function notifySaved() {
+    const n = document.getElementById('savedNotice');
+    n.classList.add('show');
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => n.classList.remove('show'), 2000);
+  }
+
+  function saveState() {
+    try {
+      const state = {
+        name: document.getElementById('studentName').value,
+        branch: document.getElementById('studentBranch').value,
+        score: document.getElementById('studentScore').value,
+        skills: [...selectedSkills],
+        levels: skillLevels,
+        company: selectedCompany,
+        step: currentStep
+      };
+      localStorage.setItem('placeReadyState', JSON.stringify(state));
+      notifySaved();
+    } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('placeReadyState');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (state.name) document.getElementById('studentName').value = state.name;
+      if (state.branch) document.getElementById('studentBranch').value = state.branch;
+      if (state.score) { document.getElementById('studentScore').value = state.score; updateScoreBar(); }
+      if (state.skills) {
+        state.skills.forEach(s => {
+          selectedSkills.add(s);
+          const tag = document.querySelector(`.tag[data-skill="${CSS.escape(s)}"]`);
+          if (tag) { tag.classList.add('selected'); const lvl = state.levels?.[s] || 2; tag.setAttribute('data-level', String(lvl)); skillLevels[s] = lvl; }
+        });
+      }
+      if (state.company) {
+        selectedCompany = state.company;
+        const card = document.querySelector(`.company-card[data-company="${CSS.escape(state.company)}"]`);
+        if (card) { card.classList.add('selected'); card.setAttribute('aria-pressed', 'true'); }
+      }
+    } catch(e) {}
+  }
 
   function updateScoreBar() {
     const raw = document.getElementById('studentScore').value;
@@ -675,12 +833,21 @@
     if (c >= 8) { hint.textContent = `${c.toFixed(2)} ✦ Excellent`; hint.style.color = 'var(--green)'; fill.style.background = '#1d8348'; }
     else if (c >= 6) { hint.textContent = `${c.toFixed(2)} ✓ Above threshold`; hint.style.color = 'var(--blue)'; fill.style.background = '#0071e3'; }
     else { hint.textContent = `${c.toFixed(2)} — ${(6 - c).toFixed(2)} below 6.0`; hint.style.color = 'var(--red)'; fill.style.background = '#c0392b'; }
+    scheduleSave();
   }
 
-  function toggleSkill(el) {
-    const s = el.dataset.skill;
-    if (selectedSkills.has(s)) { selectedSkills.delete(s); el.classList.remove('selected'); }
-    else { selectedSkills.add(s); el.classList.add('selected'); }
+  function scheduleSave() { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveState, 800); }
+
+  function cycleLevel(el) {
+    const skill = el.dataset.skill;
+    const current = skillLevels[skill] || 0;
+    if (current === 0) {
+      selectedSkills.add(skill); el.classList.add('selected'); el.setAttribute('aria-pressed', 'true');
+      skillLevels[skill] = 1; el.setAttribute('data-level', '1');
+    } else if (current === 1) { skillLevels[skill] = 2; el.setAttribute('data-level', '2'); }
+    else if (current === 2) { skillLevels[skill] = 3; el.setAttribute('data-level', '3'); }
+    else { selectedSkills.delete(skill); el.classList.remove('selected'); el.removeAttribute('data-level'); el.setAttribute('aria-pressed', 'false'); delete skillLevels[skill]; }
+    scheduleSave();
   }
 
   function addCustomSkill() {
@@ -690,16 +857,47 @@
     const n = val.charAt(0).toUpperCase() + val.slice(1);
     if ([...document.querySelectorAll('#skillTagsContainer .tag')].some(t => t.dataset.skill === n)) { inp.value=''; return; }
     const tag = document.createElement('div');
-    tag.className = 'tag selected'; tag.dataset.skill = n; tag.textContent = n;
-    tag.onclick = function(){ toggleSkill(this); };
+    tag.className = 'tag selected'; tag.dataset.skill = n; tag.setAttribute('data-level', '2');
+    tag.setAttribute('role', 'button'); tag.setAttribute('tabindex', '0'); tag.setAttribute('aria-pressed', 'true');
+    tag.innerHTML = n + '<span class="level-dots"><span class="level-dot"></span><span class="level-dot"></span><span class="level-dot"></span></span>';
+    tag.onclick = function(){ cycleLevel(this); };
+    tag.onkeydown = function(e){ if(e.key===' '||e.key==='Enter'){e.preventDefault();cycleLevel(this);} };
     document.getElementById('skillTagsContainer').appendChild(tag);
-    selectedSkills.add(n); inp.value = '';
+    selectedSkills.add(n); skillLevels[n] = 2; inp.value = ''; scheduleSave();
   }
 
   function selectCompany(el) {
-    document.querySelectorAll('.company-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedCompany = el.dataset.company;
+    if (compareMode) {
+      el.classList.toggle('selected');
+      const co = el.dataset.company;
+      if (el.classList.contains('selected')) {
+        if (compareCompanies.length >= 3) { showError('step1Error','Max 3 companies in compare mode.'); el.classList.remove('selected'); return; }
+        el.setAttribute('aria-pressed', 'true'); compareCompanies.push(co);
+      } else { el.setAttribute('aria-pressed', 'false'); compareCompanies = compareCompanies.filter(c => c !== co); }
+      selectedCompany = compareCompanies[0] || null;
+    } else {
+      document.querySelectorAll('.company-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
+      el.classList.add('selected'); el.setAttribute('aria-pressed', 'true');
+      selectedCompany = el.dataset.company; compareCompanies = [selectedCompany];
+    }
+    scheduleSave();
+  }
+
+  function toggleCompareMode() {
+    compareMode = document.getElementById('compareMode').checked;
+    if (!compareMode) {
+      document.querySelectorAll('.company-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
+      compareCompanies = []; selectedCompany = null;
+    }
+  }
+
+  function filterCompanies() {
+    const q = document.getElementById('companySearch').value.toLowerCase();
+    document.querySelectorAll('.company-card').forEach(c => {
+      const name = c.dataset.company.toLowerCase();
+      const skills = c.querySelector('.co-skills').textContent.toLowerCase();
+      c.style.display = (name.includes(q) || skills.includes(q)) ? '' : 'none';
+    });
   }
 
   function goToStep(n) {
@@ -708,27 +906,22 @@
     document.getElementById('step' + n).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updateProgress();
+    scheduleSave();
   }
 
   function updateProgress() {
-    const labels = ['Your Profile','Target Company','Skill Check','AI Report'];
     for (let i = 0; i < 4; i++) {
       const circle = document.getElementById('pc' + i);
       const label  = document.getElementById('pl' + i);
-      circle.classList.remove('active','done');
-      label.classList.remove('active','done');
+      circle.classList.remove('active','done'); label.classList.remove('active','done'); circle.removeAttribute('aria-current');
       if (i < currentStep) { circle.classList.add('done'); circle.textContent = '✓'; label.classList.add('done'); }
-      else if (i === currentStep) { circle.classList.add('active'); circle.textContent = i+1; label.classList.add('active'); }
+      else if (i === currentStep) { circle.classList.add('active'); circle.textContent = i+1; label.classList.add('active'); circle.setAttribute('aria-current', 'step'); }
       else { circle.textContent = i+1; }
       if (i < 3) document.getElementById('pline'+i).classList.toggle('done', i < currentStep);
     }
   }
 
-  function showError(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg; el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 3500);
-  }
+  function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3500); }
 
   function goToStep1() {
     const name = document.getElementById('studentName').value.trim();
@@ -741,30 +934,63 @@
   }
 
   function goToStep2() {
-    if (!selectedCompany) { showError('step1Error','Please select a company.'); return; }
+    const target = compareMode ? compareCompanies[0] : selectedCompany;
+    if (!target) { showError('step1Error','Please select at least one company.'); return; }
     buildComparison();
     goToStep(2);
   }
 
   function buildComparison() {
-    const required = companies[selectedCompany].skills;
+    if (compareMode && compareCompanies.length >= 2) buildCompareTable();
+    buildSingleComparison(compareCompanies[0] || selectedCompany);
+  }
+
+  function buildCompareTable() {
+    const allSkills = new Set();
+    compareCompanies.forEach(co => companies[co].skills.forEach(s => allSkills.add(s)));
+    const skills = [...allSkills];
+    let headerHTML = '<tr><th>Skill</th>' + compareCompanies.map(co => `<th>${co}</th>`).join('') + '</tr>';
+    let bodyHTML = skills.map(skill => {
+      const cells = compareCompanies.map(co => {
+        const has = selectedSkills.has(skill);
+        const needed = companies[co].skills.includes(skill);
+        return `<td><span class="pill ${!needed ? 'pill-green' : has ? 'pill-green' : 'pill-red'}" style="${!needed ? 'opacity:0.4' : ''}">${!needed ? '—' : has ? '✓' : '✗'}</span></td>`;
+      }).join('');
+      return `<tr><td>${skill}</td>${cells}</tr>`;
+    }).join('');
+    document.getElementById('compareTableWrap').innerHTML = `
+      <div class="section-label" style="margin-top:0">Multi-company comparison</div>
+      <div class="compare-table-wrap"><table class="compare-table">${headerHTML}${bodyHTML}</table></div>
+    `;
+    document.getElementById('compareTableWrap').style.display = 'block';
+    document.getElementById('radarWrap').style.display = 'none';
+  }
+
+  function buildSingleComparison(co) {
+    if (compareMode && compareCompanies.length >= 2) {
+      document.getElementById('compareTableWrap').style.display = 'block';
+      document.getElementById('radarWrap').style.display = 'none';
+    } else {
+      document.getElementById('compareTableWrap').style.display = 'none';
+    }
+    const required = companies[co].skills;
     const matched  = required.filter(s => selectedSkills.has(s));
     const missing  = required.filter(s => !selectedSkills.has(s));
     const pct = Math.round((matched.length / required.length) * 100);
     const fillColor = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
     const pctColor  = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
-
     let rows = required.map(skill => {
       const has = selectedSkills.has(skill);
+      const lvl = skillLevels[skill] || 0;
+      const lvlLabel = lvl === 1 ? 'Beginner' : lvl === 2 ? 'Intermediate' : lvl === 3 ? 'Advanced' : '';
       return `<div class="skill-row">
-        <span class="skill-name-col">${skill}</span>
+        <span class="skill-name-col">${skill}${lvlLabel ? ` <span style="font-size:10px;color:var(--text3)">(${lvlLabel})</span>` : ''}</span>
         <span class="pill ${has ? 'pill-green' : 'pill-red'}">${has ? '✓ You have this' : '✗ Missing'}</span>
       </div>`;
     }).join('');
-
     document.getElementById('comparisonContent').innerHTML = `
       <div class="match-header">
-        <span style="font-size:13px;color:var(--text3)">Match for <strong style="color:var(--text)">${selectedCompany}</strong></span>
+        <span style="font-size:13px;color:var(--text3)">Match for <strong style="color:var(--text)">${co}</strong></span>
         <span class="match-pct" style="color:${pctColor}">${pct}%</span>
       </div>
       <div class="match-meter"><div class="match-fill" id="matchFillBar" style="width:0%;background:${fillColor};"></div></div>
@@ -772,92 +998,65 @@
       <div class="skill-table">${rows}</div>
     `;
     setTimeout(() => { const b = document.getElementById('matchFillBar'); if(b) b.style.width = pct + '%'; }, 80);
-
-    // Draw radar
-    drawRadar(required, matched);
-    document.getElementById('radarWrap').style.display = 'flex';
+    if (required.length >= 3) { drawRadar(required, matched); document.getElementById('radarWrap').style.display = 'flex'; }
+    else { document.getElementById('radarWrap').style.display = 'none'; }
   }
 
   function drawRadar(required, matched) {
     const canvas = document.getElementById('radarCanvas');
     const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-
-    const cx = W/2, cy = H/2 - 10;
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = 280, cssH = 240;
+    canvas.width = cssW * dpr; canvas.height = cssH * dpr;
+    canvas.style.width = cssW + 'px'; canvas.style.height = cssH + 'px';
+    ctx.scale(dpr, dpr); ctx.clearRect(0, 0, cssW, cssH);
+    const cx = cssW/2, cy = cssH/2 - 10;
     const R = Math.min(cx, cy) - 30;
     const N = required.length;
-    if (N < 3) return;
-
     const angle = i => (i / N) * 2 * Math.PI - Math.PI/2;
     const pt = (i, r) => ({ x: cx + r * Math.cos(angle(i)), y: cy + r * Math.sin(angle(i)) });
-
-    // Grid rings
     for (let ring = 1; ring <= 4; ring++) {
-      ctx.beginPath();
-      for (let i = 0; i < N; i++) { const p = pt(i, R * ring/4); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
-      ctx.closePath();
-      ctx.strokeStyle = 'rgba(0,0,0,0.07)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.beginPath(); for (let i = 0; i < N; i++) { const p = pt(i, R * ring/4); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
+      ctx.closePath(); ctx.strokeStyle = 'rgba(0,0,0,0.07)'; ctx.lineWidth = 1; ctx.stroke();
     }
-    // Axes
     for (let i = 0; i < N; i++) {
-      const p = pt(i, R);
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y);
-      ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 1; ctx.stroke();
+      const p = pt(i, R); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)'; ctx.lineWidth = 1; ctx.stroke();
     }
-    // Fill — required
-    ctx.beginPath();
-    for (let i = 0; i < N; i++) { const p = pt(i, R); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(0,113,227,0.06)'; ctx.fill();
+    ctx.beginPath(); for (let i = 0; i < N; i++) { const p = pt(i, R); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
+    ctx.closePath(); ctx.fillStyle = 'rgba(0,113,227,0.06)'; ctx.fill();
     ctx.strokeStyle = 'rgba(0,113,227,0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
-
-    // Fill — matched
-    ctx.beginPath();
-    for (let i = 0; i < N; i++) {
-      const has = matched.includes(required[i]);
-      const p = pt(i, has ? R : R*0.08);
-      i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(0,113,227,0.15)'; ctx.fill();
+    ctx.beginPath(); for (let i = 0; i < N; i++) { const has = matched.includes(required[i]); const p = pt(i, has ? R : R*0.08); i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y); }
+    ctx.closePath(); ctx.fillStyle = 'rgba(0,113,227,0.15)'; ctx.fill();
     ctx.strokeStyle = '#0071e3'; ctx.lineWidth = 2; ctx.stroke();
-
-    // Dots
     for (let i = 0; i < N; i++) {
-      const has = matched.includes(required[i]);
-      const p = pt(i, has ? R : R*0.08);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 2*Math.PI);
-      ctx.fillStyle = has ? '#1d8348' : '#c0392b'; ctx.fill();
+      const has = matched.includes(required[i]); const p = pt(i, has ? R : R*0.08);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 2*Math.PI); ctx.fillStyle = has ? '#1d8348' : '#c0392b'; ctx.fill();
     }
-
-    // Labels
     ctx.font = '11px DM Sans, sans-serif'; ctx.fillStyle = 'rgba(29,29,31,0.6)'; ctx.textAlign = 'center';
-    for (let i = 0; i < N; i++) {
-      const p = pt(i, R + 18);
-      ctx.fillText(required[i], p.x, p.y + 4);
-    }
+    for (let i = 0; i < N; i++) { const p = pt(i, R + 18); ctx.fillText(required[i], p.x, p.y + 4); }
   }
 
-  function goToStep3() {
-    buildResult();
-    goToStep(3);
-    fetchAIAnalysis();
-  }
+  function goToStep3() { buildResult(); goToStep(3); generateLocalAIAnalysis(); }
 
   function buildResult() {
     const name     = document.getElementById('studentName').value.trim();
     const branch   = document.getElementById('studentBranch').value.trim();
     const score    = parseFloat(document.getElementById('studentScore').value);
-    const required = companies[selectedCompany].skills;
+    const primary  = compareCompanies[0] || selectedCompany;
+    const required = companies[primary].skills;
     const matched  = required.filter(s => selectedSkills.has(s));
     const missing  = required.filter(s => !selectedSkills.has(s));
     const pct      = Math.round((matched.length / required.length) * 100);
     const ready    = pct >= 75 && score >= 6.0;
-    const co       = companies[selectedCompany];
-
-    // Readiness score (weighted)
+    const co       = companies[primary];
     const readinessScore = Math.round(pct * 0.6 + (Math.min(score,10)/10)*100 * 0.4);
+
+    let roundsHTML = '';
+    if (co.rounds) {
+      roundsHTML = `<div class="section-label">Interview pipeline — ${primary}</div>
+        <div class="rounds-pipeline">${co.rounds.map((r,i) => `<div class="round-node"><div class="round-box">${r}</div>${i < co.rounds.length-1 ? '<div class="round-arrow">→</div>' : ''}</div>`).join('')}</div>`;
+    }
 
     let suggestHTML = '';
     if (missing.length > 0) {
@@ -873,27 +1072,26 @@
           </div>
         </div>`;
       }).join('');
-      suggestHTML = `<div class="section-label">📅 Personalised study roadmap</div><div class="roadmap">${items}</div>`;
+      suggestHTML = `<div class="section-label">Personalised study roadmap</div><div class="roadmap">${items}</div>`;
     } else {
-      suggestHTML = `<div class="all-good">🎉 You have all required skills for ${selectedCompany}! Focus on mock interviews and system design practice.</div>`;
+      suggestHTML = `<div class="all-good">You have all required skills for ${primary}! Focus on mock interviews and system design practice.</div>`;
     }
 
     let alertHTML = '';
     if (!ready && pct >= 75 && score < 6.0) {
-      alertHTML = `<div class="alert-box alert-amber">⚠️ Strong skill match (${pct}%) but CGPA ${score.toFixed(2)} is below the 6.0 cutoff. Many companies screen on CGPA first.</div>`;
+      alertHTML = `<div class="alert-box alert-amber">Strong skill match (${pct}%) but CGPA ${score.toFixed(2)} is below the 6.0 cutoff. Many companies screen on CGPA first.</div>`;
     } else if (!ready && pct < 75 && score >= 6.0) {
-      alertHTML = `<div class="alert-box alert-amber">⚠️ Good CGPA (${score.toFixed(2)}) but skill match is only ${pct}%. Work through the roadmap below to close the gap.</div>`;
+      alertHTML = `<div class="alert-box alert-amber">Good CGPA (${score.toFixed(2)}) but skill match is only ${pct}%. Work through the roadmap below to close the gap.</div>`;
     }
 
     document.getElementById('resultContent').innerHTML = `
       <div class="result-hero">
         <div class="result-icon">${ready ? '🎯' : '📚'}</div>
-        <div class="result-name">${name}${branch ? ` · ${branch}` : ''} — <em>${selectedCompany}</em></div>
+        <div class="result-name">${name}${branch ? ` · ${branch}` : ''} — <em>${primary}</em></div>
         <div class="result-status-badge ${ready ? 'badge-ready' : 'badge-notready'}">
           ${ready ? '✓ PLACEMENT READY' : '✗ GAP ACTION NEEDED'}
         </div>
       </div>
-
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-val" style="color:${pct>=75?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}">${pct}%</div>
@@ -908,71 +1106,142 @@
           <div class="stat-lbl">Readiness score</div>
         </div>
       </div>
-
       <div style="display:flex;gap:10px;margin-bottom:0.5rem;flex-wrap:wrap">
         <div style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;">💰 ${co.salary}</div>
         <div style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;">💼 ${co.roles}</div>
       </div>
-
+      ${roundsHTML}
       ${alertHTML}
       ${suggestHTML}
     `;
   }
 
-  async function fetchAIAnalysis() {
+  function generateLocalAIAnalysis() {
     const name     = document.getElementById('studentName').value.trim();
     const branch   = document.getElementById('studentBranch').value.trim();
     const score    = parseFloat(document.getElementById('studentScore').value);
-    const required = companies[selectedCompany].skills;
+    const primary  = compareCompanies[0] || selectedCompany;
+    const required = companies[primary].skills;
     const matched  = required.filter(s => selectedSkills.has(s));
     const missing  = required.filter(s => !selectedSkills.has(s));
     const pct      = Math.round((matched.length / required.length) * 100);
-    const allSkills = [...selectedSkills].join(', ');
+    const readinessScore = Math.round(pct * 0.6 + (Math.min(score,10)/10)*100 * 0.4);
 
-    const prompt = `You are a campus placement expert. Analyse this student's profile concisely (3–4 sentences, no bullet points):
-
-Student: ${name}${branch ? `, ${branch}` : ''}
-CGPA: ${score}/10
-Skills: ${allSkills}
-Target Company: ${selectedCompany}
-Required Skills: ${required.join(', ')}
-Matched: ${matched.join(', ') || 'None'}
-Missing: ${missing.join(', ') || 'None'}
-Skill Match: ${pct}%
-
-Give specific, actionable advice on: (1) overall readiness, (2) the biggest gap to fix first and how, (3) one thing that would most boost chances. Be encouraging but honest. Keep it under 100 words.`;
-
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }]
-        })
-      });
-      const data = await res.json();
-      const text = data.content?.map(b => b.text || '').join('') || '';
-      document.getElementById('aiText').textContent = text || 'Analysis unavailable.';
-    } catch(e) {
-      document.getElementById('aiText').textContent = `Based on your profile, focus on closing the skill gaps identified above. Prioritise DSA and core CS fundamentals as they are tested by most companies. Mock interviews and consistent practice will significantly improve your placement readiness.`;
+    let analysis = '';
+    if (readinessScore >= 80) {
+      analysis = `${name}, you're in a strong position for ${primary}. Your readiness score of ${readinessScore}/100 puts you in the top tier of campus applicants. `;
+      if (missing.length > 0) { analysis += `The biggest gap is ${missing[0]} — even a foundational understanding would push you over the edge. Look at ${courseMap[missing[0]]?.course || 'a quick introductory course'} and focus on being able to answer basic questions about it in the interview. `; }
+      analysis += `Your CGPA of ${score.toFixed(1)} is solid. At this stage, the highest-ROI activity is doing timed mock interviews and revising core CS fundamentals. You're ready — just keep sharpening.`;
+    } else if (readinessScore >= 60) {
+      analysis = `${name}, you're making good progress but not quite there yet for ${primary} (readiness score: ${readinessScore}/100). `;
+      if (missing.length > 0) { analysis += `Your single biggest priority is ${missing[0]} — it's a must-have for this company and the highest-weight skill in their interview process. `; if (missing.length > 1) analysis += `After that, focus on ${missing[1]}. `; }
+      analysis += score < 6.0 ? `Your CGPA of ${score.toFixed(1)} is also a concern since most companies have a 6.0 cutoff. Work on both skills and academics simultaneously.` : `Your CGPA is fine, so channel your energy into closing skill gaps. With 4–6 weeks of focused preparation, you can be placement-ready.`;
+    } else {
+      analysis = `${name}, you have some ground to cover for ${primary} (readiness score: ${readinessScore}/100), but this is completely normal at your stage. `;
+      if (missing.length > 0) { analysis += `You're missing ${missing.length} of the ${required.length} required skills. Start with ${missing[0]} since it's the most fundamental for their interview process. `; }
+      analysis += `Don't try to learn everything at once — pick one skill per week, complete a beginner-level project, and move to the next. `;
+      analysis += score < 6.0 ? `Also, seriously work on improving your CGPA — it's your first filter in most campus drives.` : `Your CGPA gives you a safety net, so use that advantage to systematically build your technical skills.`;
     }
+    document.getElementById('aiText').textContent = analysis;
+  }
+
+  function copyShareLink() {
+    const primary = compareCompanies[0] || selectedCompany;
+    const name = document.getElementById('studentName').value.trim();
+    const score = document.getElementById('studentScore').value;
+    const data = { n: name, s: score, c: primary, p: Math.round((requiredSkillsMatch(primary)) * 100) };
+    const encoded = btoa(JSON.stringify(data));
+    const url = location.origin + location.pathname + '#result=' + encoded;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector('#shareStrip .share-btn');
+      btn.textContent = 'Copied!'; btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => { prompt('Copy this link:', url); });
+  }
+
+  function requiredSkillsMatch(co) { const required = companies[co].skills; const matched = required.filter(s => selectedSkills.has(s)); return matched.length / required.length; }
+
+  function downloadReport() {
+    const primary = compareCompanies[0] || selectedCompany;
+    const name = document.getElementById('studentName').value.trim();
+    const branch = document.getElementById('studentBranch').value.trim();
+    const score = parseFloat(document.getElementById('studentScore').value);
+    const required = companies[primary].skills;
+    const matched = required.filter(s => selectedSkills.has(s));
+    const missing = required.filter(s => !selectedSkills.has(s));
+    const pct = Math.round((matched.length / required.length) * 100);
+    const readinessScore = Math.round(pct * 0.6 + (Math.min(score,10)/10)*100 * 0.4);
+    let text = `PLACEREADY — PLACEMENT READINESS REPORT\n`;
+    text += `${'='.repeat(42)}\n\n`;
+    text += `Student: ${name}${branch ? ' | ' + branch : ''}\n`;
+    text += `Target: ${primary} | ${companies[primary].salary}\n`;
+    text += `CGPA: ${score.toFixed(2)}/10\n\n`;
+    text += `Readiness Score: ${readinessScore}/100\n`;
+    text += `Skill Match: ${pct}% (${matched.length}/${required.length})\n`;
+    text += `Status: ${pct >= 75 && score >= 6.0 ? 'READY' : 'GAP ACTION NEEDED'}\n\n`;
+    text += `INTERVIEW ROUNDS: ${companies[primary].rounds?.join(' → ') || 'N/A'}\n\n`;
+    text += `MATCHED SKILLS:\n`;
+    matched.forEach(s => { text += `  + ${s}${skillLevels[s] ? ' (' + ['','Beginner','Intermediate','Advanced'][skillLevels[s]] + ')' : ''}\n`; });
+    text += `\nMISSING SKILLS:\n`;
+    missing.forEach(s => { text += `  - ${s} — ${courseMap[s]?.course || 'Search online'}\n`; });
+    text += `\nGenerated: ${new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })}\n`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `placeready-${primary.toLowerCase()}-${name.toLowerCase().replace(/\s+/g,'-')}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function toggleDark() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    if (current === 'dark') { html.setAttribute('data-theme', 'light'); document.getElementById('darkToggle').textContent = '🌙'; localStorage.setItem('placeReadyDark', 'light'); }
+    else { html.setAttribute('data-theme', 'dark'); document.getElementById('darkToggle').textContent = '☀️'; localStorage.setItem('placeReadyDark', 'dark'); }
+  }
+
+  function initDark() {
+    const saved = localStorage.getItem('placeReadyDark');
+    if (saved === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); document.getElementById('darkToggle').textContent = '☀️'; }
   }
 
   function restart() {
-    selectedSkills = new Set(); selectedCompany = null;
+    selectedSkills = new Set(); skillLevels = {}; selectedCompany = null; compareCompanies = []; compareMode = false;
+    document.getElementById('compareMode').checked = false;
     document.getElementById('studentName').value = '';
     document.getElementById('studentBranch').value = '';
     document.getElementById('studentScore').value = '';
     document.getElementById('scoreBarFill').style.width = '0%';
     document.getElementById('scoreHintText').textContent = '—';
     document.getElementById('scoreHintText').style.color = '';
-    document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
-    document.querySelectorAll('.company-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.tag').forEach(t => { t.classList.remove('selected'); t.removeAttribute('data-level'); t.setAttribute('aria-pressed', 'false'); });
+    document.querySelectorAll('.company-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
     document.getElementById('aiText').innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div> Generating your personalised analysis…</div>';
+    document.getElementById('companySearch').value = '';
+    document.querySelectorAll('.company-card').forEach(c => c.style.display = '');
     goToStep(0);
+    try { localStorage.removeItem('placeReadyState'); } catch(e) {}
   }
+
+  function loadShareResult() {
+    const hash = window.location.hash;
+    if (!hash.startsWith('#result=')) return;
+    try {
+      const data = JSON.parse(atob(hash.replace('#result=', '')));
+      document.getElementById('studentName').value = data.n || '';
+      document.getElementById('studentScore').value = data.s || '';
+      updateScoreBar();
+      if (data.c && companies[data.c]) {
+        selectedCompany = data.c;
+        const card = document.querySelector(`.company-card[data-company="${CSS.escape(data.c)}"]`);
+        if (card) { card.classList.add('selected'); card.setAttribute('aria-pressed', 'true'); }
+      }
+      if (data.p !== undefined) { document.getElementById('aiText').textContent = `Shared result for ${data.n}: ${data.p}% skill match for ${data.c || 'selected company'}. This is a shared snapshot — fill in your actual details for a personalised analysis.`; }
+    } catch(e) {}
+  }
+
+  initDark(); loadState(); loadShareResult();
 </script>
 </body>
 </html>
+```
