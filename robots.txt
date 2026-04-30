@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nishantjlu.github.io/placement-tracker/sitemap.xml

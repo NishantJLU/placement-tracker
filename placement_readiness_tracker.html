@@ -10,8 +10,7 @@
   <meta property="og:image" content="https://nishantjlu.github.io/placement-tracker/og-image.png"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="theme-color" content="#0071e3"/>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230071e3'/><text x='16' y='23' text-anchor='middle' font-size='20' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>"/>
-  <title>PlaceReady — Campus Placement Intelligence</title>
+  <link rel="manifest" href="manifest.json"/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1240,6 +1239,18 @@
   }
 
   initDark(); loadState(); loadShareResult();
+
+  // PWA Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('js/sw.js');
+  }
+
+  // Google Analytics event tracking
+  function trackEvent(category, action, label) {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', action, { event_category: category, event_label: label });
+    }
+  }
 </script>
 </body>
 </html>
