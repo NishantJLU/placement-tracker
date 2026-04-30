@@ -55,11 +55,12 @@ const signInAnon = async () => {
 // OpenAI API Integration
 // Get your API key from https://platform.openai.com/api-keys
 const OPENAI_CONFIG = {
-  apiKey: 'YOUR_OPENAI_API_KEY'
+  getApiKey: () => localStorage.getItem('openai_api_key')
 };
 
 const generateAIAnalysis = async (userProfile, company, skillGaps) => {
-  if (!OPENAI_CONFIG.apiKey || OPENAI_CONFIG.apiKey === 'YOUR_OPENAI_API_KEY') {
+  const apiKey = OPENAI_CONFIG.getApiKey();
+  if (!apiKey) {
     return generateLocalAnalysis(userProfile, company, skillGaps);
   }
 
@@ -83,7 +84,7 @@ Provide a brief analysis (2-3 sentences) and a 4-week study roadmap with specifi
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_CONFIG.apiKey}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
