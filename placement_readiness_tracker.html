@@ -516,6 +516,9 @@
   </div>
   <h1>Campus Placement<br><em>Readiness Tracker</em></h1>
   <p>AI-powered gap analysis to help you land your dream company</p>
+  <div class="settings-row" style="margin-top:12px">
+    <input type="password" id="apiKeyInput" placeholder="OpenAI API Key (optional)" style="font-size:11px;padding:6px 10px;width:200px" onchange="saveApiKey()"/>
+  </div>
 </header>
 
 <main class="container">
@@ -1238,7 +1241,27 @@
     } catch(e) {}
   }
 
-  initDark(); loadState(); loadShareResult();
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (key) {
+      localStorage.setItem('openai_api_key', key);
+      showSavedNotice();
+    }
+  }
+
+  function loadApiKey() {
+    const key = localStorage.getItem('openai_api_key');
+    if (key) document.getElementById('apiKeyInput').value = key;
+  }
+
+  function showSavedNotice() {
+    const n = document.getElementById('savedNotice');
+    n.textContent = 'API Key saved';
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 2000);
+  }
+
+  initDark(); loadState(); loadShareResult(); loadApiKey();
 
   // Set OpenAI API key from config (user enters via console or add input UI)
   // To enable AI: localStorage.setItem('openai_api_key', 'your-key')
