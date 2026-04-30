@@ -4,6 +4,18 @@ AI-powered campus placement readiness tracker to help students prepare for their
 
 ![PlaceReady](https://img.shields.io/badge/Version-1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
+## About
+
+**PlaceReady** is a comprehensive placement preparation platform designed for students preparing for campus placements. It helps you:
+
+- **Assess your skills** and identify gaps
+- **Compare against company requirements** from top tech companies
+- **Build a personalized study roadmap** with AI-powered recommendations
+- **Track your progress** over time
+- **Prepare with tools** like resume builder, ATS checker, and interview Q&A
+
+Built with love for students by students. No account required - everything works locally in your browser.
+
 ## Features
 
 - **Skill Assessment** — Track your technical skills with proficiency levels
