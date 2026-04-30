@@ -88,6 +88,23 @@
       schedules.splice(i, 1);
       save();
     }
+    function addToCalendar(i) {
+      const s = schedules[i];
+      const date = new Date(s.time);
+      const end = new Date(date.getTime() + 45*60000);
+      const format = d => d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+      const ics = `BEGIN:VEVENT
+SUMMARY:Mock Interview - ${s.topic}
+DTSTART:${format(date)}
+DTEND:${format(end)}
+DESCRIPTION:Practice ${s.type} round for ${s.topic}
+END:VEVENT`;
+      const blob = new Blob([ics], { type: 'text/calendar' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'mock-interview.ics';
+      a.click();
+    }
     function getDaysUntil(dateStr) {
       const diff = new Date(dateStr) - new Date();
       return Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -107,6 +124,7 @@
             <div class="sched-topic">${s.topic}</div>
             <div class="sched-type">${s.type}</div>
           </div>
+          ${upcoming ? `<button onclick="addToCalendar(${i})" style="padding:4px 8px;cursor:pointer;font-size:11px">📅</button>` : ''}
           <button onclick="removeSchedule(${i})" style="padding:4px 8px;cursor:pointer;opacity:0.5">×</button>
         </div>`;
       }).join('');
