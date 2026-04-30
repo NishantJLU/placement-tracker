@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Deadlines — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .btn-secondary { background: #f5f5f7; }
+    .form-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+    input, select { flex: 1; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; min-width: 150px; }
+    .deadlines-list { display: flex; flex-direction: column; gap: 10px; }
+    .deadline-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid #0071e3; }
+    .deadline-item.urgent { border-left-color: #c0392b; }
+    .deadline-item.soon { border-left-color: #f39c12; }
+    .deadline-item.done { border-left-color: #27ae60; opacity: 0.6; }
+    .deadline-date { font-weight: 700; font-size: 14px; min-width: 90px; }
+    .deadline-info { flex: 1; }
+    .deadline-company { font-weight: 600; font-size: 15px; }
+    .deadline-type { font-size: 12px; color: #6e6e73; }
+    .deadline-days { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #0071e3; color: #fff; }
+    .urgent .deadline-days { background: #c0392b; }
+    .soon .deadline-days { background: #f39c12; }
+    .done .deadline-days { background: #27ae60; }
+    .empty { text-align: center; padding: 2rem; color: #6e6e73; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Company Deadlines</h1>
+    <p class="subtitle">Track application deadlines</p>
+
+    <div class="card">
+      <div class="form-row">
+        <select id="company">
+          <option value="">Select Company</option>
+          <option value="Google">Google</option>
+          <option value="Microsoft">Microsoft</option>
+          <option value="Amazon">Amazon</option>
+          <option value="Meta">Meta</option>
+          <option value="Apple">Apple</option>
+          <option value="Goldman Sachs">Goldman Sachs</option>
+          <option value="Netflix">Netflix</option>
+          <option value="Adobe">Adobe</option>
+          <option value="Flipkart">Flipkart</option>
+          <option value="Uber">Uber</option>
+        </select>
+        <input type="date" id="deadlineDate"/>
+        <input type="text" id="role" placeholder="Role (SWE, etc.)"/>
+        <button class="btn btn-primary" onclick="addDeadline()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="deadlines-list" id="deadlinesList">
+        <div class="empty">No deadlines yet. Add above.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let deadlines = JSON.parse(localStorage.getItem('placeReadyDeadlines') || '[]');
+    function save() {
+      localStorage.setItem('placeReadyDeadlines', JSON.stringify(deadlines));
+      render();
+    }
+    function addDeadline() {
+      const company = document.getElementById('company').value;
+      const date = document.getElementById('deadlineDate').value;
+      const role = document.getElementById('role').value;
+      if (!company || !date) return alert('Select company and date');
+      deadlines.push({ company, date, role, addedAt: new Date().toISOString() });
+      save();
+    }
+    function removeDeadline(i) {
+      deadlines.splice(i, 1);
+      save();
+    }
+    function markDone(i) {
+      deadlines[i].done = true;
+      save();
+    }
+    function getDaysUntil(dateStr) {
+      const diff = new Date(dateStr) - new Date();
+      return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+    function render() {
+      const list = document.getElementById('deadlinesList');
+      if (deadlines.length === 0) {
+        list.innerHTML = '<div class="empty">No deadlines yet. Add above.</div>';
+        return;
+      }
+      list.innerHTML = deadlines.map((d, i) => {
+        const days = getDaysUntil(d.date);
+        let status = '';
+        if (d.done) status = 'done';
+        else if (days < 0) status = 'done';
+        else if (days <= 7) status = 'urgent';
+        else if (days <= 30) status = 'soon';
+        const displayDays = d.done ? 'Done' : (days < 0 ? 'Passed' : days + ' days');
+        return `<div class="deadline-item ${status}">
+          <div class="deadline-date">${new Date(d.date).toLocaleDateString('en-IN', {day:'numeric', month:'short'})}</div>
+          <div class="deadline-info">
+            <div class="deadline-company">${d.company}</div>
+            <div class="deadline-type">${d.role || 'SWE'}</div>
+          </div>
+          <div class="deadline-days">${displayDays}</div>
+          ${!d.done ? `<button onclick="markDone(${i})" style="padding:4px 8px;font-size:11px;cursor:pointer">✓</button>` : ''}
+          <button onclick="removeDeadline(${i})" style="padding:4px 8px;font-size:11px;cursor:pointer;opacity:0.5">×</button>
+        </div>`;
+      }).join('');
+    }
+    render();
+  </script>
+</body>
+</html>

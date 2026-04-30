@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Alerts — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .form-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+    input, select { flex: 1; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; min-width: 150px; }
+    .info { background: #e7f3ff; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; }
+    .jobs-list { display: flex; flex-direction: column; gap: 10px; }
+    .job-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f9f9f9; border-radius: 10px; }
+    .job-company { font-weight: 600; font-size: 15px; }
+    .job-role { font-size: 13px; color: #6e6e73; }
+    .job-link { color: #0071e3; text-decoration: none; font-size: 13px; }
+    .job-link:hover { text-decoration: underline; }
+    .job-new { background: #fff; border-left: 4px solid #0071e3; }
+    .empty { text-align: center; padding: 2rem; color: #6e6e73; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Job Alerts</h1>
+    <p class="subtitle">Set up alerts for new openings</p>
+
+    <div class="info">
+      <strong>ℹ️ Note:</strong> Job alerts require a backend. For now, this stores job links. To get real email alerts, set up <a href="https://ifttt.com" style="color:#0071e3">IFTTT</a> or use <a href="https://google.com/alerts" style="color:#0071e3">Google Alerts</a>.
+    </div>
+
+    <div class="card">
+      <div class="form-row">
+        <input type="text" id="company" placeholder="Company name"/>
+        <input type="url" id="link" placeholder="Job link (careers page)"/>
+        <button class="btn btn-primary" onclick="addJob()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Saved Job Links</h3>
+      <div class="jobs-list" id="jobsList">
+        <div class="empty">No jobs saved yet.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Quick Links</h3>
+      <div class="jobs-list">
+        <div class="job-item job-new">
+          <div><a href="https://careers.google.com" target="_blank" class="job-link">Google Careers</a></div>
+          <div class="job-role">google.com/careers</div>
+        </div>
+        <div class="job-item job-new">
+          <div><a href="https://careers.microsoft.com" target="_blank" class="job-link">Microsoft Careers</a></div>
+          <div class="job-role">careers.microsoft.com</div>
+        </div>
+        <div class="job-item job-new">
+          <div><a href="https://amazon.jobs" target="_blank" class="job-link">Amazon Jobs</a></div>
+          <div class="job-role">amazon.jobs</div>
+        </div>
+        <div class="job-item job-new">
+          <div><a href="https://metacareers.com" target="_blank" class="job-link">Meta Careers</a></div>
+          <div class="job-role">metacareers.com</div>
+        </div>
+        <div class="job-item job-new">
+          <div><a href="https://careers.apple.com" target="_blank" class="job-link">Apple Careers</a></div>
+          <div class="job-role">careers.apple.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let jobs = JSON.parse(localStorage.getItem('placeReadyJobs') || '[]');
+    function save() {
+      localStorage.setItem('placeReadyJobs', JSON.stringify(jobs));
+      render();
+    }
+    function addJob() {
+      const company = document.getElementById('company').value;
+      const link = document.getElementById('link').value;
+      if (!company) return alert('Enter company name');
+      jobs.push({ company, link, addedAt: new Date().toISOString() });
+      save();
+    }
+    function removeJob(i) {
+      jobs.splice(i, 1);
+      save();
+    }
+    function render() {
+      const list = document.getElementById('jobsList');
+      if (jobs.length === 0) {
+        list.innerHTML = '<div class="empty">No jobs saved yet.</div>';
+        return;
+      }
+      list.innerHTML = jobs.map((j, i) => `
+        <div class="job-item">
+          <div class="job-info">
+            <div class="job-company">${j.company}</div>
+            ${j.link ? `<a href="${j.link}" target="_blank" class="job-link">View Job →</a>` : ''}
+          </div>
+          <button onclick="removeJob(${i})" style="margin-left:auto;padding:4px 8px;cursor:pointer;opacity:0.5">×</button>
+        </div>
+      `).join('');
+    }
+    render();
+  </script>
+</body>
+</html>

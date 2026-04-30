@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Progress Charts — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+    .stat-card { background: #f9f9f9; border-radius: 10px; padding: 1rem; text-align: center; }
+    .stat-val { font-size: 24px; font-weight: 700; color: #0071e3; }
+    .stat-label { font-size: 11px; color: #6e6e73; margin-top: 4px; }
+    .chart-area { margin: 1.5rem 0; }
+    .chart-bar { height: 30px; background: #eee; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+    .chart-fill { height: 100%; background: linear-gradient(90deg, #0071e3, #00d4aa); border-radius: 4px; transition: width 0.5s; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: #fff; font-size: 11px; font-weight: 600; }
+    .skill-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 8px; }
+    .skill-name { font-weight: 500; }
+    .skill-level { color: #6e6e73; font-size: 12px; }
+    .empty { text-align: center; padding: 2rem; color: #6e6e73; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Progress Charts</h1>
+    <p class="subtitle">Track your skill improvement over time</p>
+
+    <div class="card">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="totalReports">0</div>
+          <div class="stat-label">Reports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="avgScore">0%</div>
+          <div class="stat-label">Avg Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="skillsImproved">0</div>
+          <div class="stat-label">Skills Added</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="topCompany">-</div>
+          <div class="stat-label">Top Target</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Skill Progress</h3>
+      <div id="skillProgress">
+        <div class="empty">Complete assessments to see progress.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Recent Reports</h3>
+      <div id="recentReports">
+        <div class="empty">No reports yet.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-primary" onclick="saveCurrentReport()">Save Current Report</button>
+      <button class="btn" onclick="clearData()" style="margin-left:10px">Clear All Data</button>
+    </div>
+  </div>
+
+  <script>
+    let reports = JSON.parse(localStorage.getItem('placeReadyReports') || '[]');
+    function saveCurrentReport() {
+      const name = localStorage.getItem('placeReadyName') || 'User';
+      const score = localStorage.getItem('placeReadyScore') || 0;
+      const company = localStorage.getItem('placeReadyLastCompany') || 'Unknown';
+      const skills = JSON.parse(localStorage.getItem('placeReadyState') || '{}').skills || [];
+      reports.push({
+        name, score, company, skills,
+        savedAt: new Date().toISOString()
+      });
+      localStorage.setItem('placeReadyReports', JSON.stringify(reports));
+      render();
+      alert('Report saved!');
+    }
+    function clearData() {
+      if (confirm('Clear all progress data?')) {
+        reports = [];
+        localStorage.setItem('placeReadyReports', JSON.stringify(reports));
+        render();
+      }
+    }
+    function render() {
+      document.getElementById('totalReports').textContent = reports.length;
+      
+      if (reports.length > 0) {
+        const avg = Math.round(reports.reduce((a, r) => a + (r.readinessScore || r.score || 0), 0) / reports.length);
+        document.getElementById('avgScore').textContent = avg + '%';
+        
+        const allSkills = new Set();
+        reports.forEach(r => (r.skills || []).forEach(s => allSkills.add(s)));
+        document.getElementById('skillsImproved').textContent = allSkills.size;
+        
+        const topCompany = [...reports].sort((a,b) => (b.score||0) - (a.score||0))[0]?.company || '-';
+        document.getElementById('topCompany').textContent = topCompany.substring(0,8);
+        
+        const skillCounts = {};
+        reports.forEach(r => (r.skills || []).forEach(s => skillCounts[s] = (skillCounts[s] || 0) + 1));
+        const sortedSkills = Object.entries(skillCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        
+        document.getElementById('skillProgress').innerHTML = sortedSkills.length ? sortedSkills.map(([skill, count]) => `
+          <div class="skill-row">
+            <span class="skill-name">${skill}</span>
+            <span class="skill-level">${count} time${count>1?'s':''}</span>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-fill" style="width:${(count / reports.length) * 100}%">${count}</div>
+          </div>
+        `).join('') : '<div class="empty">Complete assessments to see progress.</div>';
+        
+        document.getElementById('recentReports').innerHTML = reports.slice(-5).reverse().map(r => `
+          <div class="skill-row" style="padding:8px 0;border-bottom:1px solid #eee">
+            <span class="skill-name">${r.company || 'Unknown'}</span>
+            <span class="skill-level">${r.readinessScore || r.score || 0}% · ${new Date(r.savedAt||r.addedAt).toLocaleDateString('en-IN')}</span>
+          </div>
+        `).join('') || '<div class="empty">No reports yet.</div>';
+      } else {
+        document.getElementById('avgScore').textContent = '0%';
+        document.getElementById('skillsImproved').textContent = '0';
+        document.getElementById('topCompany').textContent = '-';
+        document.getElementById('skillProgress').innerHTML = '<div class="empty">Complete assessments to see progress.</div>';
+        document.getElementById('recentReports').innerHTML = '<div class="empty">No reports yet.</div>';
+      }
+    }
+    render();
+  </script>
+</body>
+</html>

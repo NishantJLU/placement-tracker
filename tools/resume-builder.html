@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume Builder — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab { padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 500; }
+    .tab.active { background: #0071e3; color: #fff; border-color: #0071e3; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; color: #6e6e73; }
+    input, textarea, select { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 14px; }
+    textarea { min-height: 100px; resize: vertical; }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .btn-secondary { background: #f5f5f7; color: #1d1d1f; }
+    .btn-row { display: flex; gap: 10px; margin-top: 1rem; flex-wrap: wrap; }
+    .section-title { font-size: 14px; font-weight: 600; margin: 1.5rem 0 1rem; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .preview { background: #fff; padding: 40px; border: 1px solid #eee; border-radius: 8px; font-size: 12px; line-height: 1.6; }
+    .preview h2 { font-size: 18px; margin-bottom: 4px; }
+    .preview .contact { color: #6e6e73; font-size: 11px; margin-bottom: 16px; }
+    .preview h3 { font-size: 13px; margin: 16px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+    .preview .entry { margin-bottom: 12px; }
+    .preview .entry-title { font-weight: 600; }
+    .preview .entry-meta { color: #6e6e73; font-size: 11px; }
+    .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
+    .template { border: 2px solid #eee; border-radius: 12px; padding: 1rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .template:hover { border-color: #0071e3; }
+    .template.selected { border-color: #0071e3; background: rgba(0,113,227,0.05); }
+    .template-name { font-weight: 600; font-size: 13px; }
+    @media print { body { background: white; } .tabs, .btn-row, .form-group, h1, .subtitle { display: none; } .preview { border: none; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Resume Builder</h1>
+    <p class="subtitle">Create placement-ready resumes in minutes</p>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('form')">Fill Details</button>
+      <button class="tab" onclick="showTab('preview')">Preview</button>
+      <button class="tab" onclick="showTab('download')">Download</button>
+    </div>
+
+    <div id="formTab">
+      <div class="card">
+        <div class="form-group">
+          <label>Select Template</label>
+          <div class="template-grid">
+            <div class="template selected" onclick="selectTemplate('modern')" data-tpl="modern">
+              <div class="template-name">Modern</div>
+            </div>
+            <div class="template" onclick="selectTemplate('classic')" data-tpl="classic">
+              <div class="template-name">Classic</div>
+            </div>
+            <div class="template" onclick="selectTemplate('minimal')" data-tpl="minimal">
+              <div class="template-name">Minimal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="rName" placeholder="Your full name" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="rEmail" placeholder="email@example.com" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="rPhone" placeholder="+91 98765 43210" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>LinkedIn (optional)</label>
+          <input type="url" id="rLinkedIn" placeholder="linkedin.com/in/yourprofile" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>GitHub/Portfolio (optional)</label>
+          <input type="url" id="rGitHub" placeholder="github.com/yourusername" oninput="updatePreview()"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Objective / Summary</label>
+          <textarea id="rObjective" placeholder="Brief career objective..." oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Education</div>
+        <div class="form-group">
+          <label>Degree / Branch</label>
+          <input type="text" id="rDegree" placeholder="B.Tech in Computer Science" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>College</label>
+          <input type="text" id="rCollege" placeholder="Your University" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>CGPA / Percentage</label>
+          <input type="text" id="rCGPA" placeholder="8.5/10" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>12th / Diploma</label>
+          <input type="text" id="r12th" placeholder="85%" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>10th</label>
+          <input type="text" id="r10th" placeholder="90%" oninput="updatePreview()"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Skills</div>
+        <div class="form-group">
+          <label>Technical Skills (comma separated)</label>
+          <input type="text" id="rSkills" placeholder="Python, Java, DSA, SQL, React, Node.js" oninput="updatePreview()"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Projects</div>
+        <div class="form-group">
+          <label>Project 1 - Name</label>
+          <input type="text" id="p1Name" placeholder="Project name" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>Project 1 - Description</label>
+          <textarea id="p1Desc" placeholder="What you built..." oninput="updatePreview()"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Project 2 - Name</label>
+          <input type="text" id="p2Name" placeholder="Project name" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>Project 2 - Description</label>
+          <textarea id="p2Desc" placeholder="What you built..." oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Achievements (optional)</div>
+        <div class="form-group">
+          <label>Achievements / Certifications</label>
+          <textarea id="rAchievements" placeholder="LeetCode 500+ problems, CodeChef 3⭐..." oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Internships (optional)</div>
+        <div class="form-group">
+          <label>Company / Role</label>
+          <input type="text" id="rInternship" placeholder="Company Name - Intern" oninput="updatePreview()"/>
+        </div>
+        <div class="form-group">
+          <label>Work Description</label>
+          <textarea id="rInternshipDesc" placeholder="What you did..." oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div id="previewTab" style="display:none">
+      <div class="card">
+        <div class="preview" id="resumePreview"></div>
+      </div>
+    </div>
+
+    <div id="downloadTab" style="display:none">
+      <div class="card">
+        <p style="margin-bottom:1rem">Download your resume as PDF or image:</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedTemplate = 'modern';
+    function selectTemplate(tpl) {
+      selectedTemplate = tpl;
+      document.querySelectorAll('.template').forEach(el => el.classList.remove('selected'));
+      document.querySelector(`[data-tpl="${tpl}"]`).classList.add('selected');
+      updatePreview();
+    }
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('formTab').style.display = tab === 'form' ? 'block' : 'none';
+      document.getElementById('previewTab').style.display = tab === 'preview' ? 'block' : 'none';
+      document.getElementById('downloadTab').style.display = tab === 'download' ? 'block' : 'none';
+      if (tab === 'preview') updatePreview();
+    }
+    function getVal(id) { return document.getElementById(id).value || ''; }
+    function updatePreview() {
+      const p = document.getElementById('resumePreview');
+      const name = getVal('rName');
+      const email = getVal('rEmail');
+      const phone = getVal('rPhone');
+      const linkedin = getVal('rLinkedIn');
+      const github = getVal('rGitHub');
+      const obj = getVal('rObjective');
+      const degree = getVal('rDegree');
+      const college = getVal('rCollege');
+      const cgpa = getVal('rCGPA');
+      const skills = getVal('rSkills');
+      const p1n = getVal('p1Name');
+      const p1d = getVal('p1Desc');
+      const p2n = getVal('p2Name');
+      const p2d = getVal('p2Desc');
+      const ach = getVal('rAchievements');
+      const intern = getVal('rInternship');
+      const internd = getVal('rInternshipDesc');
+
+      let html = '';
+      if (selectedTemplate === 'modern') {
+        html = `<h2>${name || 'Your Name'}</h2>
+<div class="contact">${email}${phone ? ' | ' + phone : ''}${linkedin ? ' | ' + linkedin : ''}${github ? ' | ' + github : ''}</div>`;
+        if (obj) html += `<p style="margin-bottom:16px;font-style:italic">${obj}</p>`;
+        html += `<h3>Education</h3>
+<div class="entry">
+<div class="entry-title">${degree || 'Your Degree'}</div>
+<div class="entry-meta">${college || 'Your College'}${cgpa ? ' — CGPA: ' + cgpa : ''}</div>
+</div>`;
+        if (skills) {
+          html += `<h3>Skills</h3><p>${skills}</p>`;
+        }
+        if (p1n) {
+          html += `<h3>Projects</h3>
+<div class="entry"><div class="entry-title">${p1n}</div><p>${p1d}</p></div>`;
+        }
+        if (p2n) {
+          html += `<div class="entry"><div class="entry-title">${p2n}</div><p>${p2d}</p></div>`;
+        }
+        if (intern) {
+          html += `<h3>Internship</h3>
+<div class="entry"><div class="entry-title">${intern}</div><p>${internd}</p></div>`;
+        }
+        if (ach) {
+          html += `<h3>Achievements</h3><p>${ach}</p>`;
+        }
+      } else if (selectedTemplate === 'classic') {
+        html = `<h2 style="text-align:center">${name || 'Your Name'}</h2>
+<div class="contact" style="text-align:center">${email}${phone ? ' | ' + phone : ''}${linkedin || github}</div>`;
+        if (obj) html += `<p style="margin:16px 0;text-align:justify">${obj}</p>`;
+        if (degree) html += `<h3 style="text-align:center;border:none">${degree} — ${college} — ${cgpa}</h3>`;
+        if (skills) html += `<h3 style="border:none">Technical Skills</h3><p>${skills}</p>`;
+        if (p1n) html += `<h3>Projects</h3><div><b>${p1n}</b><br/>${p1d}</div>`;
+        if (intern) html += `<h3>Experience</h3><div><b>${intern}</b><br/>${internd}</div>`;
+      } else {
+        html = `<h2>${name || 'Your Name'}</h2>
+<p>${email} ${phone}</p>`;
+        if (obj) html += `<p style="margin:12px 0">${obj}</p>`;
+        html += `<hr style="margin:12px 0"/>
+${degree ? '<b>' + degree + '</b><br/>' : ''}${college}${cgpa ? ' | ' + cgpa : ''}<br/>`;
+        if (skills) html += `<br/><b>Skills:</b> ${skills}`;
+        if (p1n) html += `<br/><br/><b>${p1n}</b><br/>${p1d}`;
+      }
+      p.innerHTML = html;
+    }
+    function downloadPDF() {
+      window.print();
+    }
+    updatePreview();
+  </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interview Q&A Bank — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .search { margin-bottom: 1rem; }
+    .search input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .tab { padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: #fff; cursor: pointer; font-size: 13px; }
+    .tab.active { background: #0071e3; color: #fff; border-color: #0071e3; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .q-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee; }
+    .q-item:last-child { border: none; }
+    .q-category { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #0071e3; margin-bottom: 6px; letter-spacing: 0.05em; }
+    .q-question { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+    .q-answer { font-size: 14px; color: #444; line-height: 1.6; padding: 10px; background: #f9f9f9; border-radius: 8px; }
+    .q-answer strong { color: #0071e3; }
+    .tip { background: #e7f3ff; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+    .tip strong { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Interview Q&A Bank</h1>
+    <p class="subtitle">Common questions with sample answers</p>
+
+    <div class="search">
+      <input type="text" id="search" placeholder="Search questions..." oninput="filter()"/>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="filterCat('all')">All</button>
+      <button class="tab" onclick="filterCat('intro')">Intro</button>
+      <button class="tab" onclick="filterCat('tech')">Technical</button>
+      <button class="tab" onclick="filterCap('behavioral')">Behavioral</button>
+      <button class="tab" onclick="filterCap('hr')">HR</button>
+    </div>
+
+    <div class="tip"><strong>💡 Tip:</strong> Practice these out loud. Use the STAR method for behavioral questions.</div>
+
+    <div class="card">
+      <div id="qaList"></div>
+    </div>
+  </div>
+
+  <script>
+    const QAS = [
+      { cat: 'intro', q: 'Tell me about yourself', a: '<strong>Structure:</strong> Present → Past → Future<br><br><strong>Example:</strong> "I'm a final year B.Tech CSE student at [College]. I've strong skills in Python, Java, and DSA. Last summer, I did an internship at [Company] where I built [project]. I'm excited about SWE roles because I love solving complex problems. In the next 2 years, I want to work at a company like yours."' },
+      { cat: 'intro', q: 'Why do you want to join our company?', a: '1. <strong>Research:</strong> Know the company\'s mission/products<br>2. <strong>Connect:</strong> "I want to work at a company that values..."<br>3. <strong>Your fit:</strong> "My skills in X align with your work on Y"<br>4. <strong>Growth:</strong> "I want to grow in..."' },
+      { cat: 'tech', q: 'Difference between Array and Linked List', a: '<strong>Array:</strong> Fixed size, O(1) random access, stored contiguously in memory<br><br><strong>Linked List:</strong> Dynamic size, O(n) access, stored randomly, has next pointer<br><br><strong>When to use:</strong> Array for fast access, Linked List for frequent insert/delete.' },
+      { cat: 'tech', q: 'Explain DFS vs BFS', a: '<strong>DFS</strong> (Depth First Search): Go deep first, use Stack, good for path finding, lower memory.<br><br><strong>BFS</strong> (Breadth First Search): Go wide first, use Queue, shortest path in unweighted, higher memory.<br><br><strong>Time:</strong> Both O(V+E)<br><strong>Space:</strong> Both O(V)' },
+      { cat: 'tech', q: 'What is OOP? Explain key concepts', a: '<strong>4 Pillars:</strong><br>1. <strong>Encapsulation</strong> - Data hiding, private variables with public getters/setters<br>2. <strong>Inheritance</strong> - Reuse, parent-child relationship<br>3. <strong>Polymorphism</strong> - Same interface, different behavior<br>4. <strong>Abstraction</strong> - Hide complexity, show only essentials' },
+      { cat: 'tech', q: 'Explain SQL vs NoSQL', a: '<strong>SQL:</strong> Structured, tables, rows, ACID, fixed schema (MySQL, PostgreSQL)<br><br><strong>NoSQL:</strong> Unstructured, documents/graphs, BASE, flexible (MongoDB, Redis)<br><br><strong>Choose:</strong> SQL for transactions, NoSQL for scale/flexibility.' },
+      { cat: 'tech', q: 'What is DBMS normalization?', a: 'Organizing data to reduce redundancy.<br><br><strong>1NF:</strong> Atomic values, no repeats<br><strong>2NF:</strong> No partial dependencies<br><strong>3NF:</strong> No transitive dependencies<br><br><strong>Goal:</strong> Avoid update/insert anomalies.' },
+      { cat: 'tech', q: 'Explain OSI Model layers', a: '<strong>7 Layers:</strong><br>1. Physical - Hardware, cables<br>2. Data Link - MAC addresses<br>3. Network - IP addresses<br>4. Transport - TCP/UDP<br>5. Session -connections<br>6. Presentation - encryption<br>7. Application - HTTP/FTP' },
+      { cat: 'tech', q: 'What is a deadlock?', a: 'When two+ processes wait for each other forever.<br><br><strong>Conditions (all must meet):</strong><br>1. Mutual Exclusion<br>2. Hold & Wait<br>3. No Preemption<br>4. Circular Wait<br><br><strong>Solution:</strong> Kill process, restart, or avoid circular wait.' },
+      { cat: 'tech', q: 'Explain your project', a: 'Use <strong>STAR</strong> format:<br><br><strong>S</strong>ituation: "I built X for Y problem"<br><strong>T</strong>ask: "I was responsible for..."<br><strong>A</strong>ction: "I used X technology, it involved..."<br><strong>R</strong>esult: "It improved by Y%, used by Z users"' },
+      { cat: 'behavioral', q: 'Tell me about a challenge', a: '1. <strong>Pick a relevant challenge</strong> (project, code bug, deadline)<br>2. <strong>Your role</strong> - don\'t blame others<br>3. <strong>How you solved it</strong> - show problem-solving<br>4. <strong>What you learned</strong> - growth mindset' },
+      { cat: 'behavioral', q: 'Tell me about a failure', a: '1. <strong>Pick real failure</strong> (not too small)<br>2. <strong>What happened</strong> - be honest<br>3. <strong>What you learned</strong> - show growth<br>4. <strong>How you applied it</strong> - better now' },
+      { cat: 'behavioral', q: 'Why should we hire you?', a: '1. <strong>Skills match:</strong> "I have X, Y, Z skills you need"<br>2. <strong>Projects:</strong> "My project in [area] proves..."<br>3. <strong>Culture fit:</strong> "I thrive in collaborative environments"<br>4. <strong>Enthusiasm:</strong> "I\'m excited about..."' },
+      { cat: 'hr', q: 'What are your strengths?', a: '<strong>Pick 3:</strong><br>1. Technical skill relevant to job<br>2. Soft skill (communication, leadership)<br>3. Unique thing (persistence, creativity)<br><br><strong>For each:</strong> Give example proof.' },
+      { cat: 'hr', q: 'What are your weaknesses?', a: '<strong>Avoid:</strong> "I work too hard", "I\'m perfect"<br><br><strong>Best approach:</strong> Real weakness + how you\'re improving<br><br><strong>Example:</strong> "I used to struggle with public speaking, but I joined a speaking club and now I\'m more confident."' },
+      { cat: 'hr', q: 'Where do you see yourself in 5 years?', a: 'Shows ambition and planning.<br><br><strong>Good answer:</strong><br>"I want to be a senior engineer leading projects. I plan to master X technology and eventually mentor juniors."<br><br><strong>Avoid:</strong> "I want to be CEO" (unless startup), "I don\'t know"' },
+      { cat: 'hr', q: 'Do you have any questions?', a: '<strong>Always say YES!</strong><br><br><strong>Good questions:</strong><br>• "What does a typical day look like?"<br>• "What\'s the biggest challenge team is facing?"<br>• "How is success measured?"<br>• "What\'s the team culture?"<br>• "What technologies do you use?"<br><br><strong>Skip:</strong> Salary (unless asked)' },
+    ];
+
+    let currentCat = 'all';
+    let currentSearch = '';
+
+    function filter() {
+      currentSearch = document.getElementById('search').value.toLowerCase();
+      render();
+    }
+
+    function filterCat(cat) {
+      currentCat = cat;
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      render();
+    }
+
+    function render() {
+      const filtered = QAS.filter(qa => {
+        const matchesCat = currentCat === 'all' || qa.cat === currentCat;
+        const matchesSearch = !currentSearch || qa.q.toLowerCase().includes(currentSearch) || qa.a.toLowerCase().includes(currentSearch);
+        return matchesCat && matchesSearch;
+      });
+      document.getElementById('qaList').innerHTML = filtered.map(qa => `
+        <div class="q-item">
+          <div class="q-category">${qa.cat}</div>
+          <div class="q-question">${qa.q}</div>
+          <div class="q-answer">${qa.a}</div>
+        </div>
+      `).join('') || '<p>No questions found</p>';
+    }
+    render();
+  </script>
+</body>
+</html>

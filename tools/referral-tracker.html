@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Referral Tracker — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+    input, select { flex: 1; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; min-width: 150px; }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .status-select { padding: 12px; border: 1px solid #ddd; border-radius: 10px; }
+    .referral-list { display: flex; flex-direction: column; gap: 10px; }
+    .ref-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid #0071e3; }
+    .ref-item.pending { border-left-color: #f39c12; }
+    .ref-item.rejected { border-left-color: #c0392b; }
+    .ref-item.hired { border-left-color: #27ae60; }
+    .ref-company { font-weight: 600; font-size: 15px; }
+    .ref-info { flex: 1; }
+    .ref-contact { font-size: 13px; color: #6e6e73; }
+    .ref-status { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: #0071e3; color: #fff; }
+    .pending .ref-status { background: #f39c12; }
+    .rejected .ref-status { background: #c0392b; }
+    .hired .ref-status { background: #27ae60; }
+    .ref-date { font-size: 12px; color: #999; }
+    .empty { text-align: center; padding: 2rem; color: #6e6e73; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Referral Tracker</h1>
+    <p class="subtitle">Track referral requests and status</p>
+
+    <div class="card">
+      <div class="form-row">
+        <input type="text" id="company" placeholder="Company name"/>
+        <input type="text" id="contact" placeholder="Contact name/LinkedIn"/>
+        <select id="status">
+          <option value="pending">Pending</option>
+          <option value="applied">Applied</option>
+          <option value="interview">Interview</option>
+          <option value="rejected">Rejected</option>
+          <option value="hired">Hired</option>
+        </select>
+        <button class="btn btn-primary" onclick="addReferral()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="referral-list" id="referralList">
+        <div class="empty">No referrals yet. Add above.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let referrals = JSON.parse(localStorage.getItem('placeReadyReferrals') || '[]');
+    function save() {
+      localStorage.setItem('placeReadyReferrals', JSON.stringify(referrals));
+      render();
+    }
+    function addReferral() {
+      const company = document.getElementById('company').value;
+      const contact = document.getElementById('contact').value;
+      const status = document.getElementById('status').value;
+      if (!company) return alert('Enter company name');
+      referrals.push({ company, contact, status, addedAt: new Date().toISOString() });
+      save();
+    }
+    function updateStatus(i, status) {
+      referrals[i].status = status;
+      save();
+    }
+    function removeReferral(i) {
+      referrals.splice(i, 1);
+      save();
+    }
+    function render() {
+      const list = document.getElementById('referralList');
+      if (referrals.length === 0) {
+        list.innerHTML = '<div class="empty">No referrals yet. Add above.</div>';
+        return;
+      }
+      list.innerHTML = referrals.map((r, i) => `
+        <div class="ref-item ${r.status}">
+          <div class="ref-info">
+            <div class="ref-company">${r.company}</div>
+            <div class="ref-contact">${r.contact || 'No contact'}</div>
+          </div>
+          <div class="ref-status">${r.status}</div>
+          <select class="status-select" onchange="updateStatus(${i}, this.value)">
+            <option value="pending" ${r.status==='pending'?'selected':''}>Pending</option>
+            <option value="applied" ${r.status==='applied'?'selected':''}>Applied</option>
+            <option value="interview" ${r.status==='interview'?'selected':''}>Interview</option>
+            <option value="rejected" ${r.status==='rejected'?'selected':''}>Rejected</option>
+            <option value="hired" ${r.status==='hired'?'selected':''}>Hired</option>
+          </select>
+          <button onclick="removeReferral(${i})" style="padding:4px 8px;cursor:pointer;opacity:0.5">×</button>
+        </div>
+      `).join('');
+    }
+    render();
+  </script>
+</body>
+</html>

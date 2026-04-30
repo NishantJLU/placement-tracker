@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ATS Resume Checker — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .drop-zone { border: 2px dashed #ddd; border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .drop-zone:hover { border-color: #0071e3; background: rgba(0,113,227,0.02); }
+    textarea { width: 100%; min-height: 200px; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical; }
+    .score-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; margin: 0 auto 1rem; }
+    .score-good { background: #d4edda; color: #155724; }
+    .score-medium { background: #fff3cd; color: #856404; }
+    .score-bad { background: #f8d7da; color: #721c24; }
+    .score-display { text-align: center; margin-bottom: 1.5rem; }
+    .score-label { font-size: 14px; color: #6e6e73; margin-bottom: 8px; }
+    .checks { display: flex; flex-direction: column; gap: 12px; }
+    .check-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px; }
+    .check-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .check-pass { background: #d4edda; color: #155724; }
+    .check-fail { background: #f8d7da; color: #721c24; }
+    .check-text { flex: 1; font-size: 14px; }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .tips { background: #e7f3ff; border-radius: 10px; padding: 1rem; margin-top: 1rem; }
+    .tips h4 { font-size: 14px; margin-bottom: 8px; }
+    .tips ul { font-size: 13px; padding-left: 20px; color: #444; }
+    .tips li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ATS Resume Checker</h1>
+    <p class="subtitle">Check if your resume passes automated screening</p>
+
+    <div class="card">
+      <label style="display:block;margin-bottom:8px;font-weight:600">Paste your resume text</label>
+      <textarea id="resumeText" placeholder="Paste your full resume here (text only)..."></textarea>
+      <div style="margin-top:1rem">
+        <button class="btn btn-primary" onclick="analyze()">Check Resume</button>
+      </div>
+    </div>
+
+    <div class="card" id="results" style="display:none">
+      <div class="score-display">
+        <div class="score-circle" id="scoreCircle">0%</div>
+        <div class="score-label">ATS Score</div>
+      </div>
+      <div class="checks" id="checks"></div>
+      <div class="tips">
+        <h4>Tips to Improve</h4>
+        <ul>
+          <li>Add missing keywords from job descriptions</li>
+          <li>Use standard section headers (Education, Skills, Projects)</li>
+          <li>Keep formatting simple (no tables/columns in original)</li>
+          <li>Use standard file format (.txt or .docx)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CHECKS = [
+      { id: 'length', label: 'Length (200-500 words)', min: 200, max: 500 },
+      { id: 'email', label: 'Email address present', pattern: /[@]/ },
+      { id: 'phone', label: 'Phone number present', pattern: /[0-9]{10,}/ },
+      { id: 'education', label: 'Education section', pattern: /education|college|b\.tech|degree/i },
+      { id: 'skills', label: 'Skills section', pattern: /skills|technical|programming/i },
+      { id: 'projects', label: 'Projects section', pattern: /project|built|developed/i },
+      { id: 'link', label: 'LinkedIn/GitHub link', pattern: /linkedin|github|portfolio/i },
+      { id: 'action', label: 'Action verbs used', pattern: /built|created|developed|implemented|led|managed/i },
+      { id: 'numbers', label: 'Numbers/Quantifiable results', pattern: /[0-9]+%|[0-9]+ users|[0-9]+x/i },
+    ];
+
+    function analyze() {
+      const text = document.getElementById('resumeText').value;
+      if (text.length < 50) { alert('Paste your resume text first'); return; }
+
+      let passed = 0;
+      const checksHTML = CHECKS.map(c => {
+        let pass = false;
+        if (c.min !== undefined) {
+          const wc = text.split(/\s+/).length;
+          pass = wc >= c.min && wc <= c.max;
+        } else if (c.pattern) {
+          pass = c.pattern.test(text);
+        }
+        if (pass) passed++;
+        return `<div class="check-item">
+          <div class="check-icon ${pass ? 'check-pass' : 'check-fail'}">${pass ? '✓' : '×'}</div>
+          <div class="check-text">${c.label}</div>
+        </div>`;
+      }).join('');
+
+      const score = Math.round((passed / CHECKS.length) * 100);
+      const circle = document.getElementById('scoreCircle');
+      circle.textContent = score + '%';
+      circle.className = 'score-circle ' + (score >= 70 ? 'score-good' : score >= 50 ? 'score-medium' : 'score-bad');
+
+      document.getElementById('checks').innerHTML = checksHTML;
+      document.getElementById('results').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

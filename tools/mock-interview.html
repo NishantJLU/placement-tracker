@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mock Interview Scheduler — PlaceReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 2rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #6e6e73; margin-bottom: 2rem; }
+    .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+    input, select, textarea { flex: 1; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; min-width: 150px; }
+    textarea { min-width: auto; width: 100%; }
+    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #0071e3; color: #fff; }
+    .info { background: #e7f3ff; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; }
+    .schedule-list { display: flex; flex-direction: column; gap: 10px; }
+    .sched-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid #0071e3; }
+    .sched-item.upcoming { border-left-color: #27ae60; }
+    .sched-date { font-weight: 700; font-size: 14px; min-width: 80px; }
+    .sched-info { flex: 1; }
+    .sched-topic { font-weight: 600; font-size: 15px; }
+    .sched-type { font-size: 13px; color: #6e6e73; }
+    .empty { text-align: center; padding: 2rem; color: #6e6e73; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mock Interview Scheduler</h1>
+    <p class="subtitle">Practice with peers</p>
+
+    <div class="info">
+      <strong>ℹ️ How it works:</strong> Schedule mock interviews and get reminders. Find practice partners on <a href="https://preppeers.com" style="color:#0071e3">PrepPeers</a>, <a href="https://leetcode.com/contest" style="color:#0071e3">LeetCode Discuss</a>, or your college placement cell.
+    </div>
+
+    <div class="card">
+      <div class="form-row">
+        <input type="text" id="topic" placeholder="Topic (DSA, System Design, etc.)"/>
+        <input type="datetime-local" id="schedTime"/>
+        <select id="type">
+          <option value="coding">Coding Round</option>
+          <option value="tech">Technical</option>
+          <option value="managerial">Managerial</option>
+          <option value="hr">HR Round</option>
+        </select>
+        <button class="btn btn-primary" onclick="addSchedule()">+ Schedule</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Your Schedule</h3>
+      <div class="schedule-list" id="scheduleList">
+        <div class="empty">No sessions scheduled.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;font-size:14px">Practice Tips</h3>
+      <div style="font-size:13px;line-height:1.8">
+        • <strong>Time yourself</strong> - 45 min for 2 questions<br>
+        • <strong>Think loudly</strong> - Explain your approach<br>
+        • <strong>Code cleanly</strong> - Variable names matter<br>
+        • <strong>Test edge cases</strong> - Before submitting<br>
+        • <strong>Ask for feedback</strong> - What can improve?
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let schedules = JSON.parse(localStorage.getItem('placeReadySchedule') || '[]');
+    function save() {
+      localStorage.setItem('placeReadySchedule', JSON.stringify(schedules));
+      render();
+    }
+    function addSchedule() {
+      const topic = document.getElementById('topic').value;
+      const time = document.getElementById('schedTime').value;
+      const type = document.getElementById('type').value;
+      if (!topic || !time) return alert('Enter topic and time');
+      schedules.push({ topic, time, type, addedAt: new Date().toISOString() });
+      save();
+    }
+    function removeSchedule(i) {
+      schedules.splice(i, 1);
+      save();
+    }
+    function getDaysUntil(dateStr) {
+      const diff = new Date(dateStr) - new Date();
+      return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+    function render() {
+      const list = document.getElementById('scheduleList');
+      if (schedules.length === 0) {
+        list.innerHTML = '<div class="empty">No sessions scheduled.</div>';
+        return;
+      }
+      list.innerHTML = schedules.map((s, i) => {
+        const days = getDaysUntil(s.time);
+        const upcoming = days >= 0;
+        return `<div class="sched-item ${upcoming ? 'upcoming' : ''}">
+          <div class="sched-date">${new Date(s.time).toLocaleDateString('en-IN', {day:'numeric', month:'short', hour:'numeric', minute:'2-digit'})}</div>
+          <div class="sched-info">
+            <div class="sched-topic">${s.topic}</div>
+            <div class="sched-type">${s.type}</div>
+          </div>
+          <button onclick="removeSchedule(${i})" style="padding:4px 8px;cursor:pointer;opacity:0.5">×</button>
+        </div>`;
+      }).join('');
+    }
+    render();
+  </script>
+</body>
+</html>
