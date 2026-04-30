@@ -1240,6 +1240,9 @@
 
   initDark(); loadState(); loadShareResult();
 
+  // Set OpenAI API key from config (user enters via console or add input UI)
+  // To enable AI: localStorage.setItem('openai_api_key', 'your-key')
+
   // PWA Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('js/sw.js');
