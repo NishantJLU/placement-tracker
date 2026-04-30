@@ -98,6 +98,11 @@ SUMMARY:Mock Interview - ${s.topic}
 DTSTART:${format(date)}
 DTEND:${format(end)}
 DESCRIPTION:Practice ${s.type} round for ${s.topic}
+BEGIN:VALARM
+TRIGGER:-PT5M
+ACTION:DISPLAY
+DESCRIPTION:Mock Interview starts in 5 minutes
+END:VALARM
 END:VEVENT`;
       const blob = new Blob([ics], { type: 'text/calendar' });
       const a = document.createElement('a');
